@@ -1,0 +1,5 @@
+AT+CIPSTART="TCP","time.nist.gov","13"  
+OK  
+CONNECT OK  
++IPD,51: 56868 14-07-30 01:54:30 50 0 0 515.3 UTC(NIST) *   
+CLOSED
