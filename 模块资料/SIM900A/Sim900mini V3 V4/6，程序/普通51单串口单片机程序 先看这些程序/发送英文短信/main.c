@@ -5,8 +5,6 @@
 2.找到程序中前面的#define处，根据说明修改好自己的单片机配置，编译程序
 2.下载程序
 3.等待发送成功
-
-
 *************************************************************/
 #include <REG51.H>
 
@@ -19,14 +17,12 @@
 
 //以下是开机后发送到手机的内容，发送的号码在程序中修改。
 uchar sms_text[] = "abc123";
-
-   
+  
 //注意，无论接收到信号还是发送完信号，都会进中断服务程序的
 /*初始化程序（必须使用，否则无法收发），次程序将会使用定时器1*/
 void SerialInti()//初始化程序（必须使用，否则无法收发）
 {
 	TMOD=0x20;//定时器1操作模式2:8位自动重载定时器
-
 #ifdef FOSC_12M		   //在这里根据晶振大小设置不同的数值初始化串口
 	TH1=0xf3;//装入初值，波特率2400
 	TL1=0xf3;	
@@ -34,7 +30,6 @@ void SerialInti()//初始化程序（必须使用，否则无法收发）
 	TH1=0xfd;//装入初值，波特率9600
 	TL1=0xfd;
 #endif //end of SOC_12M
-	
 	TR1=1;//打开定时器
 	SM0=0;//设置串行通讯工作模式，（10为一部发送，波特率可变，由定时器1的溢出率控制）
 	SM1=1;//(同上)在此模式下，定时器溢出一次就发送一个位的数据
@@ -51,7 +46,6 @@ void Serial_interrupt() interrupt 4
 	RI=0;//接收中断信号清零，表示将继续接收
 //	flag=1;//进入中断的标志符号
 }
-
 
 void Uart1Send(uchar c)
 {
@@ -76,7 +70,6 @@ void Uart1Sends(uchar *str)
 void DelaySec(int sec)
 {
 	uint i , j= 0;
-
 	for(i=0; i<sec; i++)
 	{
 		for(j=0; j<65535; j++)
@@ -85,15 +78,12 @@ void DelaySec(int sec)
 	}
 }
 
-
-
 void main()
 {
 	uchar i = 0;
 	SerialInti();
 	while(1)
 	{
-
 		Uart1Sends("AT+CSCS=\"GSM\"\r\n");
 		DelaySec(3);//延时3秒
 		Uart1Sends("AT+CMGF=1\r\n");
@@ -104,6 +94,4 @@ void main()
 		Uart1Send(0x1a);
 		DelaySec(15);//延时20秒
 	}
-
-
 }
