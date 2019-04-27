@@ -1,10 +1,10 @@
 ".\Objects\STARTUP.obj",
-".\Objects\main.obj",
 ".\Objects\beep.obj",
-".\Objects\hc.obj",
-".\Objects\led.obj",
 ".\Objects\fire.obj",
 ".\Objects\gas.obj",
+".\Objects\hc.obj",
+".\Objects\led.obj",
+".\Objects\main.obj",
 ".\Objects\sim900a.obj" 
 TO ".\Objects\smartHome" 
 PRINT(".\Listings\smartHome.m51") RAMSIZE(256) 

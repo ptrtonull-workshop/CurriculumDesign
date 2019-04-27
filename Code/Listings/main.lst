@@ -1,49 +1,45 @@
-C51 COMPILER V9.54   MAIN                                                                  04/27/2019 18:15:07 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  04/27/2019 18:24:42 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src) DEBUG OBJECTEXTEND PRINT(.
-                    -\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE src\C\main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src\H) DEBUG OBJECTEXTEND
+                    - PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
 
 line level    source
 
-   1          /************************************************************
-   2          程序说明：
-   3          本程序运行后如果gprs模块找到服务商信号，就拨打指定电话。
-   4          1.将自己的51单片机的串口1连接到GSM 232上
-   5          2.找到程序中前面的#define处，根据说明修改好自己的单片机配置，编译程序
-   6          2.下载程序
-   7          3.等待发送成功
-   8          *************************************************************/
-   9          #include <REG51.H>
-  10          #include "beep.h"
-  11          #include "hc.h"
-  12          #include "led.h"
-  13          #include "fire.h"
-  14          
-  15          //extern void beep();
-  16          
-  17          
-  18          void main()
-  19          {
-  20   1        //uchar i= 0;
-  21   1        SerialInti();
-*** WARNING C206 IN LINE 21 OF main.c: 'SerialInti': missing function-prototype
-  22   1        Initial_com();
-  23   1        //Led();
-  24   1        while(1){
-  25   2          if(fire()==0X01)
-  26   2        {
-  27   3          Led();
-  28   3        }
-  29   2        }
-  30   1        
-  31   1      }
+   1          /*
+   2            
+   3          */
+   4          #include <REG51.H>
+   5          #include "beep.h"
+   6          #include "hc.h"
+   7          #include "led.h"
+   8          #include "fire.h"
+   9          
+  10          //extern void beep();
+  11          void init()
+  12          {
+  13   1        SerialInti();
+*** WARNING C206 IN LINE 13 OF src\C\main.c: 'SerialInti': missing function-prototype
+  14   1        Initial_com();
+  15   1      }
+  16          void main()
+  17          {
+  18   1        //uchar i= 0;
+  19   1        init();
+  20   1        while(1)
+  21   1        {
+  22   2          if(fire()==0X01)
+  23   2          {
+  24   3            Led();
+  25   3          }
+  26   2        }
+  27   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     17    ----
+   CODE SIZE        =     20    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
