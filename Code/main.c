@@ -8,6 +8,9 @@
 *************************************************************/
 #include <REG51.H>
 #include "beep.h"
+#include "hc.h"
+#include "led.h"
+#include "fire.h"
 
 #define uchar unsigned char
 #define uint unsigned int
@@ -42,6 +45,17 @@ void SerialInti()//初始化程序（必须使用，否则无法收发）
 	ES=1;//开串行口中断	
 }
 
+void DelaySec(int sec)
+{
+	uint i, j= 0;
+	for(i=0; i<sec; i++)
+	{
+		for(j=0; j<65535; j++)
+		{	
+		}
+	}
+}
+
 /*串行通讯中断，收发完成将进入该中断*/
 void Serial_interrupt() interrupt 4 
 {
@@ -70,25 +84,7 @@ void Uart1Sends(uchar *str)
 	}
 }
 
-//延时函数大概是1s钟，不过延时大的话不准...
-void DelaySec(int sec)
-{
-	uint i , j= 0;
-	for(i=0; i<sec; i++)
-	{
-		for(j=0; j<65535; j++)
-		{	
-		}
-	}
-}
-
-void main()
-{
-	uchar i = 0;
-	uint x=3;
-	SerialInti();
-	
-	while(x){
+void sendMs(){
 		Uart1Sends("AT+CSCS=\"GSM\"\r\n");
 		DelaySec(3);//延时3秒
 		Uart1Sends("AT+CMGF=1\r\n");
@@ -98,7 +94,18 @@ void main()
 		Uart1Sends(sms_text);//修改短信内容
 		Uart1Send(0x1a);
 		DelaySec(15);//延时20秒
-		x--;
+}
+void main()
+{
+	uchar i= 0;
+	SerialInti();
+	Initial_com();
+	//Led();
+	while(1){
+		if(fire()==0X01)
+	{
+		Led();
 	}
-	Beep();
+	}
+	
 }

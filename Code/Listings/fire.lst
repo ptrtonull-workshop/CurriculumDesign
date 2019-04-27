@@ -1,0 +1,96 @@
+C51 COMPILER V9.54   FIRE                                                                  04/27/2019 16:54:57 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE FIRE
+OBJECT MODULE PLACED IN .\Objects\fire.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE fire.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src) DEBUG OBJECTEXTEND PRINT(.
+                    -\Listings\fire.lst) TABS(2) OBJECT(.\Objects\fire.obj)
+
+line level    source
+
+   1          /******************************************
+   2          传感器触发测试
+   3          单片机：STC89C52
+   4          波特率：9600
+   5          *****************************************/
+   6          #include <reg52.h>
+   7          #include <fire.h>
+   8          unsigned char date;
+   9          #define uchar unsigned char
+  10          #define uint unsigned int
+  11          sbit key1=P2^0;
+  12          
+  13          
+  14          /* 函数申明 -----------------------------------------------*/
+  15          
+  16          
+  17          //***********************************************************
+  18          
+  19          /*
+  20          ********************************************************************************
+  21          ** 函数名称 ： delay(uint z)
+  22          ** 函数功能 ： 延时函数
+  23          ********************************************************************************
+  24          */
+  25          void Fdelay(uint z)
+  26          {                                                
+  27   1          uint i,j;
+  28   1          for(i=z;i>0;i--)
+  29   1              for(j=110;j>0;j--);
+  30   1      } 
+  31          
+  32          
+  33          //*****串口初始化函数***********
+  34          
+  35          //******************************
+  36          void Initial_com(void)
+  37          {
+  38   1         EA=1;        //开总中断
+  39   1         ES=1;        //允许串口中断
+  40   1         ET1=1;        //允许定时器T1的中断
+  41   1         TMOD=0x20;   //定时器T1，在方式2中断产生波特率
+  42   1         PCON=0x00;   //SMOD=0
+  43   1         SCON=0x50;   // 方式1 由定时器控制
+  44   1         TH1=0xfd;    //波特率设置为9600
+  45   1         TL1=0xfd;
+  46   1         TR1=1;       //开定时器T1运行控制位
+  47   1      }
+  48          
+  49          //*************************
+  50          //**********主函数*********
+  51          //*************************
+  52          unsigned char fire()
+  53          {
+  54   1           if(key1==0)
+C51 COMPILER V9.54   FIRE                                                                  04/27/2019 16:54:57 PAGE 2   
+
+  55   1          {
+  56   2            Fdelay(2);    //消抖动
+  57   2            if(key1==0)   //确认触发
+  58   2            {
+  59   3               SBUF=0X01;
+  60   3               Fdelay(200);
+  61   3            }
+  62   2          }
+  63   1           if(RI)
+  64   1          {
+  65   2            date=SBUF;    //单片机接受
+  66   2            SBUF=date;    //单片机发送
+  67   2            RI=0;
+  68   2           }
+  69   1          return date;
+  70   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     91    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

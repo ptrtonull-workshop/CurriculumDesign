@@ -1,0 +1,49 @@
+C51 COMPILER V9.54   HC                                                                    04/27/2019 16:54:57 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE HC
+OBJECT MODULE PLACED IN .\Objects\hc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE hc.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src) DEBUG OBJECTEXTEND PRINT(.\L
+                    -istings\hc.lst) TABS(2) OBJECT(.\Objects\hc.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include "hc.h"
+   3          #include "beep.h"
+   4          #include "led.h"
+   5          #define uint unsigned int
+   6          sbit DQ=P2^2;
+   7           
+   8          void delayus(uint xms)
+   9          {
+  10   1         uint i,j;
+  11   1         for(i=xms;i>0;i--)
+  12   1         for(j=118;j>0;j--);
+  13   1      }
+  14          void HC()
+  15          {
+  16   1        while(1)
+  17   1        {
+  18   2          if(DQ==1){
+  19   3            Led();
+  20   3          }
+  21   2          else{
+  22   3            LedC();
+  23   3          }
+  24   2        }
+  25   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     43    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

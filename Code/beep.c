@@ -5,7 +5,7 @@
 ***************************************************************************************/
 
 #include "reg52.h"			 //此文件中定义了单片机的一些特殊功能寄存器
-#include<intrins.h>		//因为要用到左右移函数，所以加入这个头文件
+#include <intrins.h>		//因为要用到左右移函数，所以加入这个头文件
 #include "beep.h"
 
 typedef unsigned int u16;	  //对数据类型进行声明定义
@@ -32,5 +32,8 @@ void Beep()
 {
 		beep=~beep;
 		delay(10); //延时大约100us   通过修改此延时时间达到不同的发声效果	
-		beep=~beep;
+}
+void StopBeep()
+{
+	beep=0;
 }

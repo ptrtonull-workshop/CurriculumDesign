@@ -431,6 +431,21 @@
               <FileType>1</FileType>
               <FilePath>.\beep.c</FilePath>
             </File>
+            <File>
+              <FileName>hc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hc.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>fire.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\fire.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
