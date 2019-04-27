@@ -9,7 +9,7 @@
 | 5VR        | TXD(P3.1)           |
 | 5VT        | RXD(P3.0)           |
 
-单片机通过USB-TTL转接线供电，RXD、TXD不接以免冲突
+单片机通过USB-TTL转接线供电，RXD、TXD不接以免冲突，有关连线的具体信息，[请看这里](https://github.com/ptrtonull-workshop/CurriculumDesign/blob/master/%E6%A8%A1%E5%9D%97%E8%B5%84%E6%96%99/SIM900A/Sim900mini%20V3%20V4/12%EF%BC%8C%E8%B0%83%E8%AF%95%E6%95%99%E7%A8%8B%20%20%E5%BF%85%E7%9C%8B%E8%B5%84%E6%96%99/%7E%241%20SIM900Amini%20V3.7%20TTL%E6%8E%A5%E5%8F%A3%E7%94%B5%E5%B9%B3%E5%8F%98%E6%9B%B4.docx)。
 
 ### 代码
 
