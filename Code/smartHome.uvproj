@@ -446,6 +446,16 @@
               <FileType>1</FileType>
               <FilePath>.\fire.c</FilePath>
             </File>
+            <File>
+              <FileName>gas.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\gas.c</FilePath>
+            </File>
+            <File>
+              <FileName>sim900a.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sim900a.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

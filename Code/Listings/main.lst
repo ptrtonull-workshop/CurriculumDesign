@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  04/27/2019 17:39:33 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  04/27/2019 18:15:07 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -22,118 +22,35 @@ line level    source
   12          #include "led.h"
   13          #include "fire.h"
   14          
-  15          #define uchar unsigned char
-  16          #define uint unsigned int
-  17          //以下是板子上LED的配置，把Px_x改成自己对应的脚。
-  18          //以下是你的51单片机的晶振大小
-  19          #define FOSC_110592M
-  20          //#define FOSC_12M
-  21          
-  22          //以下是开机后发送到手机的内容，发送的号码在程序中修改。
-  23          uchar sms_text[] = "abc123";
-  24            
-  25          //注意，无论接收到信号还是发送完信号，都会进中断服务程序的
-  26          /*初始化程序（必须使用，否则无法收发），次程序将会使用定时器1*/
-  27          
-  28          extern void beep();
-  29          
-  30          void SerialInti()//初始化程序（必须使用，否则无法收发）
-  31          {
-  32   1        TMOD=0x20;//定时器1操作模式2:8位自动重载定时器
-  33   1      #ifdef FOSC_12M      //在这里根据晶振大小设置不同的数值初始化串口
-                TH1=0xf3;//装入初值，波特率2400
-                TL1=0xf3; 
-              #else   
-  37   1        TH1=0xfd;//装入初值，波特率9600
-  38   1        TL1=0xfd;
-  39   1      #endif //end of SOC_12M
-  40   1        TR1=1;//打开定时器
-  41   1        SM0=0;//设置串行通讯工作模式，（10为一部发送，波特率可变，由定时器1的溢出率控制）
-  42   1        SM1=1;//(同上)在此模式下，定时器溢出一次就发送一个位的数据
-  43   1        REN=1;//串行接收允许位（要先设置sm0sm1再开串行允许）
-  44   1        EA=1;//开总中断
-  45   1        ES=1;//开串行口中断 
-  46   1      }
-  47          
-  48          void DelaySec(int sec)
-  49          {
-  50   1        uint i, j= 0;
-  51   1        for(i=0; i<sec; i++)
-  52   1        {
-  53   2          for(j=0; j<65535; j++)
-  54   2          { 
-C51 COMPILER V9.54   MAIN                                                                  04/27/2019 17:39:33 PAGE 2   
-
-  55   3          }
-  56   2        }
-  57   1      }
-  58          
-  59          /*串行通讯中断，收发完成将进入该中断*/
-  60          void Serial_interrupt() interrupt 4 
-  61          {
-  62   1      //  a=SBUF;
-  63   1        P2=SBUF;
-  64   1        RI=0;//接收中断信号清零，表示将继续接收
-  65   1      //  flag=1;//进入中断的标志符号
-  66   1      }
-  67          
-  68          void Uart1Send(uchar c)
-  69          {
-  70   1        SBUF=c;
-  71   1        while(!TI);//等待发送完成信号（TI=1）出现
-  72   1        TI=0; 
-  73   1      }
-  74          
-  75          //串行口连续发送char型数组，遇到终止号/0将停止
-  76          void Uart1Sends(uchar *str)
-  77          {
-  78   1        while(*str!='\0')
-  79   1        {
-  80   2          SBUF=*str;
-  81   2          while(!TI);//等待发送完成信号（TI=1）出现
-  82   2          TI=0;
-  83   2          str++;
-  84   2        }
-  85   1      }
-  86          
-  87          void sendMs(){
-  88   1          Uart1Sends("AT+CSCS=\"GSM\"\r\n");
-  89   1          DelaySec(3);//延时3秒
-  90   1          Uart1Sends("AT+CMGF=1\r\n");
-  91   1          DelaySec(3);//延时3秒
-  92   1          Uart1Sends("AT+CMGS=\"13104610925\"\r\n");//此处修改为对方的电话号
-  93   1          DelaySec(5);//延时3秒
-  94   1          Uart1Sends(sms_text);//修改短信内容
-  95   1          Uart1Send(0x1a);
-  96   1          DelaySec(15);//延时20秒
-  97   1      }
-  98          void main()
-  99          {
- 100   1        uchar i= 0;
- 101   1        SerialInti();
- 102   1        Initial_com();
- 103   1        //Led();
- 104   1        while(1){
- 105   2          if(fire()==0X01)
- 106   2        {
- 107   3          Led();
- 108   3        }
- 109   2        }
- 110   1        
- 111   1      }
+  15          //extern void beep();
+  16          
+  17          
+  18          void main()
+  19          {
+  20   1        //uchar i= 0;
+  21   1        SerialInti();
+*** WARNING C206 IN LINE 21 OF main.c: 'SerialInti': missing function-prototype
+  22   1        Initial_com();
+  23   1        //Led();
+  24   1        while(1){
+  25   2          if(fire()==0X01)
+  26   2        {
+  27   3          Led();
+  28   3        }
+  29   2        }
+  30   1        
+  31   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    196    ----
-   CONSTANT SIZE    =     52    ----
-C51 COMPILER V9.54   MAIN                                                                  04/27/2019 17:39:33 PAGE 3   
-
+   CODE SIZE        =     17    ----
+   CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      7       5
+   DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
