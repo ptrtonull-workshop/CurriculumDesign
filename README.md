@@ -68,8 +68,6 @@
 | VCC_mcu  |      |
 
 
-
-
 ### 项目分工
 
 #### 第一阶段 
@@ -93,4 +91,12 @@
 #### 第四阶段
 
 - [x] 组合起来，测试
+
+### 模块使用
+
+- [SIM900A](https://github.com/ptrtonull-workshop/CurriculumDesign/blob/master/测试资料/sim900a.md)
+
+- [火焰模块](https://github.com/ptrtonull-workshop/CurriculumDesign/blob/master/测试资料/火焰传感器.md)
+- MQ-4
+- HC-SR501
 
