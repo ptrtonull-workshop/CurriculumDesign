@@ -361,7 +361,7 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source Group 1</GroupName>
+          <GroupName>SmartHome</GroupName>
           <GroupOption>
             <CommonProperty>
               <UseCPPCompiler>0</UseCPPCompiler>
@@ -398,7 +398,7 @@
                   <MiscControls></MiscControls>
                   <Define></Define>
                   <Undefine></Undefine>
-                  <IncludePath>.\src</IncludePath>
+                  <IncludePath>.\src\H</IncludePath>
                 </VariousControls>
               </C51>
               <Ax51>
@@ -422,39 +422,39 @@
               <FilePath>.\STARTUP.A51</FilePath>
             </File>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\main.c</FilePath>
-            </File>
-            <File>
               <FileName>beep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\beep.c</FilePath>
-            </File>
-            <File>
-              <FileName>hc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\hc.c</FilePath>
-            </File>
-            <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\led.c</FilePath>
+              <FilePath>.\src\C\beep.c</FilePath>
             </File>
             <File>
               <FileName>fire.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\fire.c</FilePath>
+              <FilePath>.\src\C\fire.c</FilePath>
             </File>
             <File>
               <FileName>gas.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\gas.c</FilePath>
+              <FilePath>.\src\C\gas.c</FilePath>
+            </File>
+            <File>
+              <FileName>hc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\C\hc.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\C\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\C\main.c</FilePath>
             </File>
             <File>
               <FileName>sim900a.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\sim900a.c</FilePath>
+              <FilePath>.\src\C\sim900a.c</FilePath>
             </File>
           </Files>
         </Group>
