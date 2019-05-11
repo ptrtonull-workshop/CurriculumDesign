@@ -1,0 +1,13 @@
+".\Objects\STARTUP.obj",
+".\Objects\beep.obj",
+".\Objects\fire.obj",
+".\Objects\gas.obj",
+".\Objects\hc.obj",
+".\Objects\led.obj",
+".\Objects\main.obj",
+".\Objects\sim900a.obj",
+".\Objects\wifiReceive.obj",
+".\Objects\wifiSent.obj",
+".\Objects\delay.obj" 
+TO ".\Objects\slave" 
+PRINT(".\Listings\slave.m51") RAMSIZE(256) 

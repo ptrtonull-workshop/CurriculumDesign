@@ -1,0 +1,63 @@
+C51 COMPILER V9.54   BEEP                                                                  05/11/2019 18:37:08 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE BEEP
+OBJECT MODULE PLACED IN .\Objects\beep.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE src\C\beep.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src\H;.\src\H) DEBUG OBJE
+                    -CTEXTEND PRINT(.\Listings\beep.lst) TABS(2) OBJECT(.\Objects\beep.obj)
+
+line level    source
+
+   1          /**************************************************************************************
+   2          *                 蜂鸣器实验                          *
+   3          实现现象：下载程序后蜂鸣器发声
+   4          注意事项：无                                          
+   5          ***************************************************************************************/
+   6          
+   7          #include "reg52.h"       //此文件中定义了单片机的一些特殊功能寄存器
+   8          #include <intrins.h>    //因为要用到左右移函数，所以加入这个头文件
+   9          #include "beep.h"
+  10          
+  11          typedef unsigned int u16;   //对数据类型进行声明定义
+  12          typedef unsigned char u8;
+  13          
+  14          sbit beep=P1^5;    
+  15          
+  16          /*******************************************************************************
+  17          * 函 数 名         : delay
+  18          * 函数功能       : 延时函数，i=1时，大约延时10us
+  19          *******************************************************************************/
+  20          void delay(u16 i)
+  21          {
+  22   1        while(i--); 
+  23   1      }
+  24          
+  25          /*******************************************************************************
+  26          * 函 数 名       : main
+  27          * 函数功能     : 主函数
+  28          * 输    入       : 无
+  29          * 输    出       : 无
+  30          *******************************************************************************/
+  31          void Beep()
+  32          {
+  33   1          beep=~beep;
+  34   1          delay(10); //延时大约100us   通过修改此延时时间达到不同的发声效果 
+  35   1      }
+  36          void StopBeep()
+  37          {
+  38   1        beep=0;
+  39   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     23    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,38 @@
+C51 COMPILER V9.54   HC                                                                    05/11/2019 12:17:12 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE HC
+OBJECT MODULE PLACED IN .\Objects\hc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE src\C\hc.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src\H;.\src\H) DEBUG OBJECT
+                    -EXTEND PRINT(.\Listings\hc.lst) TABS(2) OBJECT(.\Objects\hc.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include "hc.h"
+   3          #include "beep.h"
+   4          #include "led.h"
+   5          #define uint unsigned int
+   6          sbit DQ=P2^2;
+   7           
+   8          void delayus(uint xms)
+   9          {
+  10   1         uint i,j;
+  11   1         for(i=xms;i>0;i--)
+  12   1         for(j=118;j>0;j--);
+  13   1      }
+  14          unsigned int HC()
+  15          {
+*** ERROR C231 IN LINE 15 OF src\C\hc.c: 'HC': redefinition
+  16   1          uint flag;
+  17   1          if(DQ==1){
+  18   2            flag=1;
+  19   2          }
+  20   1          else{
+  21   2            flag=0;
+  22   2          }
+  23   1          return flag;
+  24   1      }
+*** ERROR C231 IN LINE 24 OF src\C\hc.c: 'HC': redefinition
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  2 ERROR(S)

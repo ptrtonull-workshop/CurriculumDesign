@@ -1,0 +1,1 @@
+"code\src\wifiReceive.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\code\hea) DEBUG OBJECTEXTEND PRINT(.\Listings\wifiReceive.lst) TABS (2) OBJECT(.\Objects\wifiReceive.obj)

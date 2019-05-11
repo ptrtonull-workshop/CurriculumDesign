@@ -1,0 +1,1 @@
+"code\src\fire.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\code\hea) DEBUG OBJECTEXTEND PRINT(.\Listings\fire.lst) TABS (2) OBJECT(.\Objects\fire.obj)

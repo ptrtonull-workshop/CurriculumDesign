@@ -1,0 +1,1 @@
+"code\src\wifiSent.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\code\hea) DEBUG OBJECTEXTEND PRINT(.\Listings\wifiSent.lst) TABS (2) OBJECT(.\Objects\wifiSent.obj)

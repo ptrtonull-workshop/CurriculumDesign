@@ -1,0 +1,1 @@
+"code\src\sim900a.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\code\hea) DEBUG OBJECTEXTEND PRINT(.\Listings\sim900a.lst) TABS (2) OBJECT(.\Objects\sim900a.obj)

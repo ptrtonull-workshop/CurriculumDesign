@@ -1,0 +1,19 @@
+SET C51INC=C:\Keil_v5\C51\Inc;C:\Keil_v5\C51\Inc\Atmel
+SET C51LIB=C:\Keil_v5\C51\Lib
+SET CPU_TYPE=AT89C52
+SET CPU_VENDOR=Atmel
+SET UV2_TARGET=Target 1
+SET CPU_XTAL=0x016E3600
+"C:\Keil_v5\C51\BIN\A51.EXE" @".\Objects\STARTUP._ia"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\beep.__i"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\fire.__i"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\gas.__i"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\hc.__i"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\led.__i"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\main.__i"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\sim900a.__i"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\WIFIRE~1.__I"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\wifiSent.__i"
+"C:\Keil_v5\C51\BIN\C51.EXE" @".\Objects\delay.__i"
+"C:\Keil_v5\C51\BIN\BL51.EXE" @".\Objects\slave.lnp"
+"C:\Keil_v5\C51\BIN\OH51.EXE" ".\Objects\slave" 
