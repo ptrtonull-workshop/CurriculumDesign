@@ -1,0 +1,27 @@
+Removed Pin From Net: NetName=P10 Pin=U1-1
+Removed Pin From Net: NetName=P11 Pin=U1-2
+Removed Pin From Net: NetName=P13 Pin=U1-4
+Added Component: Designator=3(HDR2X4)
+Added Component: Designator=C01(µçÈÝ)
+Added Pin To Net: NetName=GND Pin=3-1
+Added Pin To Net: NetName=P15 Pin=3-3
+Added Pin To Net: NetName=P12 Pin=3-4
+Added Pin To Net: NetName=P14 Pin=3-5
+Added Pin To Net: NetName=P10 Pin=3-6
+Added Pin To Net: NetName=P11 Pin=3-7
+Added Pin To Net: NetName=P13 Pin=3-8
+Added Pin To Net: NetName=GND Pin=C01-2
+Added Pin To Net: NetName=P13 Pin=U1-1
+Added Pin To Net: NetName=P10 Pin=U1-2
+Added Pin To Net: NetName=P11 Pin=U1-4
+Change Net Name : Old Net Name=P10 New Net Name=MOSI
+Change Net Name : Old Net Name=P11 New Net Name=MISO
+Change Net Name : Old Net Name=P12 New Net Name=IRQ
+Change Net Name : Old Net Name=P13 New Net Name=CSN
+Change Net Name : Old Net Name=P15 New Net Name=CE
+Added Pin To Net: NetName=3.3V Pin=3-2
+Added Pin To Net: NetName=3.3V Pin=C01-1
+Added Net: Name=3.3V
+Added Member To Class: ClassName=³¬Éù²¨³µÎ»¼ì²â Member=Component 3 Header 4X2
+Added Member To Class: ClassName=³¬Éù²¨³µÎ»¼ì²â Member=Component C01 Cap Pol1
+Added Room: Name=³¬Éù²¨³µÎ»¼ì²â

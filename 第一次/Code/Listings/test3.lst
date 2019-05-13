@@ -1,0 +1,59 @@
+C51 COMPILER V9.54   TEST3                                                                 05/12/2019 14:36:39 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TEST3
+OBJECT MODULE PLACED IN .\Objects\test3.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE src\C\test3.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src\H;.\src\H) DEBUG OBJ
+                    -ECTEXTEND PRINT(.\Listings\test3.lst) TABS(2) OBJECT(.\Objects\test3.obj)
+
+line level    source
+
+   1          
+   2          #include°∂reg52.h°∑
+*** ERROR C100 IN LINE 2 OF src\C\test3.c: unprintable character 0xA1 skipped
+*** ERROR C100 IN LINE 2 OF src\C\test3.c: unprintable character 0xB6 skipped
+*** ERROR C129 IN LINE 2 OF src\C\test3.c: missing ';' before '.'
+*** ERROR C309 IN LINE 2 OF src\C\test3.c: bad or missing filename
+*** WARNING C318 IN LINE 2 OF src\C\test3.c: can't open file ''
+   3          #include °∞lcd1602_drv.h°±
+*** ERROR C309 IN LINE 3 OF src\C\test3.c: bad or missing filename
+*** WARNING C318 IN LINE 3 OF src\C\test3.c: can't open file ''
+   4          sbit RS_1602=P2^6;
+   5          sbit LCD_RW=P2^5; //LCD RW ÷˜≥Ã–ÚΩ”µÿ“ª÷±µ»”⁄0
+   6          sbit E_1602=P2^7;°
+   7          uchar aa£¨jj;
+   8          °°°°//¢Ÿ–¥√¸¡Ó◊”≥Ã–Ú
+   9          °°°°void write_1602com£®uchar com£© //“∫æß–¥»Î÷∏¡Ó∫Ø ˝
+  10          °°°°{
+  11          °°°°RS_1602=0; //÷√Œ™–¥»Î√¸¡Ó
+  12          °°°°P0=com; //ÀÕ»Î ˝æ›
+  13          °°°°delay£®1£©;
+  14          °°°°E_1602=1;
+  15          °°°°delay£®1£©;
+  16          °°°°E_1602=0;
+  17          °°°°}
+  18          °°°°//¢⁄–¥ ˝æ›◊”≥Ã–Ú
+  19          °°°°void write_1602dat£®uchar dat£©
+  20          °°°°{
+  21          °°°°RS_1602=1; //÷√Œ™–¥ ˝æ›
+  22          °°°°P0=dat; //ÀÕ»Î ˝æ›
+  23          °°°°delay£®1£©;
+  24          °°°°E_1602=1;
+  25          °°°°delay£®1£©;
+  26          °°°°E_1602=0;
+  27          °°°°}
+  28          °°°°void lcd_init£®void£©
+  29          °°°°{
+  30          °°°°write_1602com£®0x38£©; //16*2 5*7µ„’Û 8Œª ˝æ›œﬂ
+  31          °°°°delay£®5£©;
+  32          °°°°write_1602com£®0x38£©;
+  33          °°°°delay£®5£©;
+  34          °°°°write_1602com£®0x38£©;
+  35          °°°°delay£®5£©;
+  36          °°°°write_1602com£®0x08£©;
+  37          °°°°write_1602com£®0x0c£©; //ø™œ‘ æ ≤ªœ‘ æπ‚±Í ≤ª…¡À∏
+  38          °°°°write_1602com£®0x06£©; //œ‘ æ≤ª“∆∂Ø π‚±Í”““∆
+  39          °°°°write_1602com£®0x01£©; // «Â∆¡
+  40          °°°°}
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  5 ERROR(S)

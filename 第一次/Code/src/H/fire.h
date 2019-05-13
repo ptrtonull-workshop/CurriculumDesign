@@ -4,4 +4,4 @@
 #endif
 void delay(int z);
 void Initial_com(void);
-unsigned char fire(void);
+unsigned int fire();

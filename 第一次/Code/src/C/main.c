@@ -1,13 +1,17 @@
-/*
-	
-*/
 #include <REG51.H>
 #include "beep.h"
 #include "hc.h"
 #include "led.h"
 #include "fire.h"
+#include "sim900a.h"
 
-//extern void beep();
+#define uchar unsigned char
+uchar FireMs[] = "fire!";
+uchar HCMs[]= "body";
+uchar NoMs[]= "no";
+
+unsigned int a=0;
+unsigned int b=0;
 void init()
 {
 	SerialInti();
@@ -15,13 +19,22 @@ void init()
 }
 void main()
 {
-	//uchar i= 0;
 	init();
 	while(1)
 	{
-		if(fire()==0X01)
+		/*
+		b=fire();
+		while(b==1)
 		{
-			Led();
+			sendMs(FireMs);
+			b=0;
+		}
+		*/
+		a=HC();
+		while(a==1)
+		{
+			sendMs(HCMs);
+			a=0;
 		}
 	}
 }

@@ -9,4 +9,4 @@ XIAODAOÖÆ×÷
 #define __HC_H
 
 #endif
-void HC(void);
+unsigned int HC(void);

@@ -1,0 +1,200 @@
+C51 COMPILER V9.54   SIM900ARE                                                             05/12/2019 14:36:38 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE SIM900ARE
+OBJECT MODULE PLACED IN .\Objects\sim900aRe.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE src\C\sim900aRe.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src\H;.\src\H) DEBUG
+                    - OBJECTEXTEND PRINT(.\Listings\sim900aRe.lst) TABS(2) OBJECT(.\Objects\sim900aRe.obj)
+
+line level    source
+
+   1          #include "reg52.h"
+   2          #include "string.h"
+   3          #define uchar unsigned char
+   4          #define uint unsigned int
+   5          
+   6          //以下是板子上LED的配置，把Px_x改成自己对应的脚。
+   7          
+   8          #define LED1_ON P3_2 = 1
+   9          #define LED1_OFF P3_2 = 0
+  10          #define LED2_ON P3_3 = 1
+  11          #define LED2_OFF P3_3 = 0
+  12          #define LED3_ON P3_4 = 1
+  13          #define LED3_OFF P3_4 = 0
+  14          #define LED4_ON P3_5 = 1
+  15          #define LED4_OFF P3_5 = 0
+  16          //以下是你的51单片机的晶振大小，使用
+  17          #define FOSC_110592M
+  18          //#define FOSC_12M
+  19          //以下是开机后拨打的手机号，改成自己想要打的号码即可。
+  20          uchar NUM[] = "15296811438";
+  21          uchar GsmRcv[50] = {0}
+  22          uchar GsmRcvAt[50] = {0};
+*** ERROR C141 IN LINE 22 OF src\C\sim900aRe.c: syntax error near 'unsigned'
+  23          uchar GsmRcvCnt = 0;
+  24          uchar GsmAtFlag = 0;
+  25          //以下修改对应的手机卡服务商，中国移动或者中国联通。如果是中国联通，就把第一个注释掉。打开第二个。
+  26          uchar SER[] = "CHINA MOBILE";
+  27          //uchar SER[] = "CHINA UNICOM";
+  28          void SerialInti()//初始化程序（必须使用，否则无法收发）
+  29          {
+  30   1          TMOD=0x20;//定时器1操作模式2:8位自动重载定时器
+  31   1          #ifdef FOSC_12M //在这里根据晶振大小设置不同的数值初始化串口
+                  TH1=0xf3;//装入初值，波特率2400
+                  TL1=0xf3;
+                  #else
+  35   1          TH1=0xfd;//装入初值，波特率9600
+  36   1          TL1=0xfd;
+  37   1          #endif //end of SOC_12M
+  38   1          TR1=1;//打开定时器
+  39   1          SM0=0;//设置串行通讯工作模式，（10为一部发送，波特率可变，由定时器1的溢出率控制）
+  40   1          SM1=1;//(同上)在此模式下，定时器溢出一次就发送一个位的数据
+  41   1          REN=1;//串行接收允许位（要先设置sm0sm1再开串行允许）
+  42   1          EA=1;//开总中断
+  43   1          ES=1;//开串行口中断
+  44   1      }
+  45          
+  46          //注意，无论接收到信号还是发送完信号，都会进中断服务程序的
+  47          
+  48          void Serial_interrupt() interrupt 4
+  49          {
+  50   1        uchar i = 0;
+  51   1        if(RI == 1) //收到信息
+  52   1        {
+  53   2          RI=0;//接收中断信号清零，表示将继续接收
+C51 COMPILER V9.54   SIM900ARE                                                             05/12/2019 14:36:38 PAGE 2   
+
+  54   2          GsmRcv[GsmRcvCnt] = SBUF;
+  55   2          // Uart1Send(tmp);
+  56   2          GsmRcvCnt++;
+  57   2          //收到了完整的AT指令，完整的AT指令是以0x0a 0x0d结尾的。故作此判断，在接收的过程中是否收到0x0a 0x0d
+  58   2          if(GsmRcv[GsmRcvCnt-2] == 0x0d && GsmRcv[GsmRcvCnt-1] == 0x0a && GsmRcvCnt >= 2)
+  59   2          {
+  60   3            //一旦收到0x0a 0x0d，就将数据保存起来。用户主函数的判断。
+  61   3            for(i=0; i<>
+*** ERROR C141 IN LINE 61 OF src\C\sim900aRe.c: syntax error near '>'
+  62   3            {
+  63   4              GsmRcvAt[i] = GsmRcv[i];
+  64   4              GsmRcv[i] = 0;
+  65   4            }
+  66   3              GsmRcvCnt = 0;
+  67   3              GsmAtFlag = 1;//收到了完整的at指令，通过这个标志位置1，这样主函数就知道去判断了。
+  68   3            }
+  69   2            else if(GsmRcvCnt >= 50)//因为内存有限，收到了50个字符还是没有看到0x0a 0x0d的话，就重新开始接收吧。
+  70   2            {
+  71   3              GsmRcvCnt = 0;
+  72   3            }
+  73   2          }
+  74   1      }
+  75          //串行口连续发送char型数组，遇到终止号/0将停止
+  76          
+  77          void Uart1Sends(uchar *str)
+  78          {
+  79   1      while(*str!='\0')
+  80   1      {
+  81   2        SBUF=*str;
+  82   2        while(!TI);//等待发送完成信号（TI=1）出现
+  83   2        TI=0;
+  84   2        str++;
+  85   2        }
+  86   1      }
+  87          //延时函数大概是1s钟，不过延时大的话不准...
+  88          void DelaySec(int sec)
+  89          {
+  90   1        uint i , j= 0;
+  91   1        for(i=0; i<>
+*** ERROR C141 IN LINE 91 OF src\C\sim900aRe.c: syntax error near '>'
+  92   1        {
+  93   2          for(j=0; j<65535; j++)
+  94   2          {
+  95   3            
+  96   3          }
+  97   2        }
+  98   1      }
+  99          void main()
+ 100          {
+ 101   1        uint i,j = 0;
+ 102   1        LED1_OFF;
+*** ERROR C202 IN LINE 102 OF src\C\sim900aRe.c: 'P3_2': undefined identifier
+ 103   1        LED2_OFF;
+*** ERROR C202 IN LINE 103 OF src\C\sim900aRe.c: 'P3_3': undefined identifier
+ 104   1        LED3_OFF;
+*** ERROR C202 IN LINE 104 OF src\C\sim900aRe.c: 'P3_4': undefined identifier
+ 105   1        LED4_OFF;
+*** ERROR C202 IN LINE 105 OF src\C\sim900aRe.c: 'P3_5': undefined identifier
+ 106   1        SerialInti();
+ 107   1        P2_4 = 0;
+*** ERROR C202 IN LINE 107 OF src\C\sim900aRe.c: 'P2_4': undefined identifier
+ 108   1        //判断是否启动完成
+C51 COMPILER V9.54   SIM900ARE                                                             05/12/2019 14:36:38 PAGE 3   
+
+ 109   1        GsmAtFlag = 0;
+ 110   1        while(GsmAtFlag == 0)
+ 111   1        {
+ 112   2          Uart1Sends("ati\r");//设置sim300波特率
+ 113   2          LED1_ON;
+*** ERROR C202 IN LINE 113 OF src\C\sim900aRe.c: 'P3_2': undefined identifier
+ 114   2          DelaySec(1);//延时1秒
+ 115   2          LED1_OFF;
+*** ERROR C202 IN LINE 115 OF src\C\sim900aRe.c: 'P3_2': undefined identifier
+ 116   2        }
+ 117   1        GsmAtFlag = 0;
+ 118   1        LED1_OFF;
+*** ERROR C202 IN LINE 118 OF src\C\sim900aRe.c: 'P3_2': undefined identifier
+ 119   1        //检测信号
+ 120   1        while(1)
+ 121   1        {
+ 122   2          Uart1Sends("AT+COPS?\r");
+ 123   2          LED2_ON;
+*** ERROR C202 IN LINE 123 OF src\C\sim900aRe.c: 'P3_3': undefined identifier
+ 124   2          DelaySec(1);//延时1秒
+ 125   2          LED2_OFF;
+*** ERROR C202 IN LINE 125 OF src\C\sim900aRe.c: 'P3_3': undefined identifier
+ 126   2          while(GsmAtFlag == 0);
+ 127   2          if(strstr(GsmRcvAt, SER) )//检测是否收到 CHINA MOBILE 服务商信息。如果收到证明是连接上网络了
+ 128   2          {
+ 129   3            break;
+ 130   3          }
+ 131   2        }
+ 132   1        LED2_OFF;
+*** ERROR C202 IN LINE 132 OF src\C\sim900aRe.c: 'P3_3': undefined identifier
+ 133   1        //来电提示
+ 134   1        while(1)
+ 135   1        {
+ 136   2          //如果有来电，模块返回RING，此时发送AT+CLCC/r去读取来电号码
+ 137   2          if(strstr(GsmRcvAt, "RING"))
+ 138   2          {
+ 139   3            Uart1Sends("AT+CLCC\r");//发送AT+CLCC/r去读取来电号码
+ 140   3          }
+ 141   2          if(strstr(GsmRcvAt, "+CLCC") && strstr(GsmRcvAt, NUM) )//检测是否收到来电显示和对应的来电号码。
+ 142   2          {
+ 143   3            LED2_ON;
+*** ERROR C202 IN LINE 143 OF src\C\sim900aRe.c: 'P3_3': undefined identifier
+ 144   3          }
+ 145   2          if(strstr(GsmRcvAt, "NO CARRIER"))//检测对方是否挂断电话。这个指令会等待对方挂断了电话数秒后执行。
+ 146   2          {
+ 147   3            LED2_OFF;
+*** ERROR C202 IN LINE 147 OF src\C\sim900aRe.c: 'P3_3': undefined identifier
+ 148   3          }
+ 149   2          //一定的时间让LED闪烁，以观察系统运行是否正常。
+ 150   2          i++;
+ 151   2          if(i <= 500)
+ 152   2          {
+ 153   3            LED1_ON;
+*** ERROR C202 IN LINE 153 OF src\C\sim900aRe.c: 'P3_2': undefined identifier
+ 154   3          }
+ 155   2          else if(i > 500 && i < 1000)
+ 156   2          {
+ 157   3            LED1_OFF;
+*** ERROR C202 IN LINE 157 OF src\C\sim900aRe.c: 'P3_2': undefined identifier
+ 158   3          }
+ 159   2          else
+ 160   2          {
+C51 COMPILER V9.54   SIM900ARE                                                             05/12/2019 14:36:38 PAGE 4   
+
+ 161   3            i = 0;
+ 162   3          }
+ 163   2        }
+ 164   1      }
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  18 ERROR(S)

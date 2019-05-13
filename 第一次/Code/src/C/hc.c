@@ -11,15 +11,13 @@ void delayus(uint xms)
    for(i=xms;i>0;i--)
    for(j=118;j>0;j--);
 }
-void HC()
+unsigned int HC()
 {
-  while(1)
-  {
-    if(DQ==1){
-			Led();
-		}
-		else{
-			LedC();
-		}
-  }
+	unsigned int flag;
+	flag=0;
+   if(DQ==1)
+	{
+		flag=1;
+	}
+	return flag;
 }

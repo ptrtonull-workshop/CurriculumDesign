@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   HC                                                                    05/11/2019 18:37:08 PAGE 1   
+C51 COMPILER V9.54   HC                                                                    05/12/2019 17:55:20 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE HC
@@ -21,22 +21,20 @@ line level    source
   11   1         for(i=xms;i>0;i--)
   12   1         for(j=118;j>0;j--);
   13   1      }
-  14          void HC()
+  14          unsigned int HC()
   15          {
-  16   1        while(1)
-  17   1        {
-  18   2          if(DQ==1){
-  19   3            Led();
-  20   3          }
-  21   2          else{
-  22   3            LedC();
-  23   3          }
-  24   2        }
-  25   1      }
+  16   1        unsigned int flag;
+  17   1        flag=0;
+  18   1         if(DQ==1)
+  19   1        {
+  20   2          flag=1;
+  21   2        }
+  22   1        return flag;
+  23   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     43    ----
+   CODE SIZE        =     38    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

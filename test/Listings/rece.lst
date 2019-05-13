@@ -1,0 +1,405 @@
+C51 COMPILER V9.54   RECE                                                                  05/12/2019 13:40:17 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE RECE
+OBJECT MODULE PLACED IN .\Objects\rece.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE rece.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\rece
+                    -.lst) TABS(2) OBJECT(.\Objects\rece.obj)
+
+line level    source
+
+   1          // Define SPI pins
+   2          #include <reg51.h>
+   3          #include <string.h>
+   4          
+   5          #define uchar unsigned char
+   6          #define uint  unsigned int
+   7          #define ulong unsigned long
+   8          
+   9          /***************************************************/
+  10          #define TX_ADR_WIDTH   5  // 5×Ö½Ú¿í¶ÈµÄ·¢ËÍ/½ÓÊÕµØÖ·
+  11          #define TX_PLOAD_WIDTH 4  // Êý¾ÝÍ¨µÀÓÐÐ§Êý¾Ý¿í¶È
+  12          
+  13          sbit LED = P2^1;
+  14          
+  15          uchar code TX_ADDRESS[TX_ADR_WIDTH] = {0x34,0x43,0x10,0x10,0x01};  // ¶¨ÒåÒ»¸ö¾²Ì¬·¢ËÍµØÖ·
+  16          uchar RX_BUF[TX_PLOAD_WIDTH];
+  17          uchar TX_BUF[TX_PLOAD_WIDTH];
+  18          uchar flag;
+  19          uchar DATA = 0x01;
+  20          uchar bdata sta;
+  21          sbit  RX_DR     = sta^6;
+  22          sbit  TX_DS     = sta^5;
+  23          sbit  MAX_RT = sta^4;
+  24          
+  25          sbit CE =  P1^5;
+  26          sbit CSN=  P1^4;
+  27          sbit SCK=  P1^3;
+  28          sbit MOSI= P1^2;
+  29          sbit MISO= P1^1;
+  30          sbit IRQ = P1^0;
+  31          
+  32          // SPI(nRF24L01) commands
+  33          #define READ_REG    0x00  // Define read command to register
+  34          #define WRITE_REG   0x20  // Define write command to register
+  35          #define RD_RX_PLOAD 0x61  // Define RX payload register address
+  36          #define WR_TX_PLOAD 0xA0  // Define TX payload register address
+  37          #define FLUSH_TX    0xE1  // Define flush TX register command
+  38          #define FLUSH_RX    0xE2  // Define flush RX register command
+  39          #define REUSE_TX_PL 0xE3  // Define reuse TX payload register command
+  40          #define NOP         0xFF  // Define No Operation, might be used to read status register
+  41          
+  42          // SPI(nRF24L01) registers(addresses)
+  43          #define CONFIG      0x00  // 'Config' register address
+  44          #define EN_AA       0x01  // 'Enable Auto Acknowledgment' register address
+  45          #define EN_RXADDR   0x02  // 'Enabled RX addresses' register address
+  46          #define SETUP_AW    0x03  // 'Setup address width' register address
+  47          #define SETUP_RETR  0x04  // 'Setup Auto. Retrans' register address
+  48          #define RF_CH       0x05  // 'RF channel' register address
+  49          #define RF_SETUP    0x06  // 'RF setup' register address
+  50          #define STATUS      0x07  // 'Status' register address
+  51          #define OBSERVE_TX  0x08  // 'Observe TX' register address
+  52          #define CD          0x09  // 'Carrier Detect' register address
+  53          #define RX_ADDR_P0  0x0A  // 'RX address pipe0' register address
+  54          #define RX_ADDR_P1  0x0B  // 'RX address pipe1' register address
+C51 COMPILER V9.54   RECE                                                                  05/12/2019 13:40:17 PAGE 2   
+
+  55          #define RX_ADDR_P2  0x0C  // 'RX address pipe2' register address
+  56          #define RX_ADDR_P3  0x0D  // 'RX address pipe3' register address
+  57          #define RX_ADDR_P4  0x0E  // 'RX address pipe4' register address
+  58          #define RX_ADDR_P5  0x0F  // 'RX address pipe5' register address
+  59          #define TX_ADDR     0x10  // 'TX address' register address
+  60          #define RX_PW_P0    0x11  // 'RX payload width, pipe0' register address
+  61          #define RX_PW_P1    0x12  // 'RX payload width, pipe1' register address
+  62          #define RX_PW_P2    0x13  // 'RX payload width, pipe2' register address
+  63          #define RX_PW_P3    0x14  // 'RX payload width, pipe3' register address
+  64          #define RX_PW_P4    0x15  // 'RX payload width, pipe4' register address
+  65          #define RX_PW_P5    0x16  // 'RX payload width, pipe5' register address
+  66          #define FIFO_STATUS 0x17  // 'FIFO Status Register' register address
+  67          
+  68          //--¶¨ÒåSPIÒªÊ¹ÓÃµÄ IO--//
+  69          sbit MOSIO = P3^4;
+  70          sbit R_CLK = P3^5;
+  71          sbit S_CLK = P3^6;
+  72          
+  73          void blink(char i);
+  74          //--È«¾Öº¯ÊýÉùÃ÷--//
+  75          
+  76          /**************************************************
+  77          º¯Êý: init_io()
+  78          
+  79          ÃèÊö:
+  80              ³õÊ¼»¯IO
+  81          /**************************************************/
+  82          void init_io(void)
+  83          {
+  84   1          CE  = 0;        // ´ý»ú
+  85   1          CSN = 1;        // SPI½ûÖ¹
+  86   1          SCK = 0;        // SPIÊ±ÖÓÖÃµÍ
+  87   1          IRQ = 1;        // ÖÐ¶Ï¸´Î»
+  88   1          LED = 1;        // ¹Ø±ÕÖ¸Ê¾µÆ
+  89   1      }
+  90          /**************************************************/
+  91          
+  92          /**************************************************
+  93          º¯Êý£ºdelay_ms()
+  94          
+  95          ÃèÊö£º
+  96              ÑÓ³ÙxºÁÃë
+  97          /**************************************************/
+  98          void delay_ms(uchar x)
+  99          {
+ 100   1          uchar i, j;
+ 101   1          i = 0;
+ 102   1          for(i=0; i<x; i++)
+ 103   1          {
+ 104   2             j = 250;
+ 105   2             while(--j);
+ 106   2             j = 250;
+ 107   2             while(--j);
+ 108   2          }
+ 109   1      }
+ 110          /**************************************************/
+ 111          
+ 112          /**************************************************
+ 113          º¯Êý£ºSPI_RW()
+ 114          
+ 115          ÃèÊö£º
+ 116              ¸ù¾ÝSPIÐ­Òé£¬Ð´Ò»×Ö½ÚÊý¾Ýµ½nRF24L01£¬Í¬Ê±´ÓnRF24L01
+C51 COMPILER V9.54   RECE                                                                  05/12/2019 13:40:17 PAGE 3   
+
+ 117              ¶Á³öÒ»×Ö½Ú
+ 118          /**************************************************/
+ 119          uchar SPI_RW(uchar byte)
+ 120          {
+ 121   1          uchar i;
+ 122   1             for(i=0; i<8; i++)          // Ñ­»·8´Î
+ 123   1             {
+ 124   2                 MOSI = (byte & 0x80);   // byte×î¸ßÎ»Êä³öµ½MOSI
+ 125   2                 byte <<= 1;             // µÍÒ»Î»ÒÆÎ»µ½×î¸ßÎ»
+ 126   2                 SCK = 1;                // À­¸ßSCK£¬nRF24L01´ÓMOSI¶ÁÈë1Î»Êý¾Ý£¬Í¬Ê±´ÓMISOÊä³ö1Î»Êý¾Ý
+ 127   2                 byte |= MISO;           // ¶ÁMISOµ½byte×îµÍÎ»
+ 128   2                 SCK = 0;                // SCKÖÃµÍ
+ 129   2             }
+ 130   1          return(byte);               // ·µ»Ø¶Á³öµÄÒ»×Ö½Ú
+ 131   1      }
+ 132          /**************************************************/
+ 133          
+ 134          /**************************************************
+ 135          º¯Êý£ºSPI_RW_Reg()
+ 136          
+ 137          ÃèÊö£º
+ 138              Ð´Êý¾Ývalueµ½reg¼Ä´æÆ÷
+ 139          /**************************************************/
+ 140          uchar SPI_RW_Reg(uchar reg, uchar value)
+ 141          {
+ 142   1          uchar status;
+ 143   1            CSN = 0;                   // CSNÖÃµÍ£¬¿ªÊ¼´«ÊäÊý¾Ý
+ 144   1            status = SPI_RW(reg);      // Ñ¡Ôñ¼Ä´æÆ÷£¬Í¬Ê±·µ»Ø×´Ì¬×Ö
+ 145   1            SPI_RW(value);             // È»ºóÐ´Êý¾Ýµ½¸Ã¼Ä´æÆ÷
+ 146   1            CSN = 1;                   // CSNÀ­¸ß£¬½áÊøÊý¾Ý´«Êä
+ 147   1            return(status);            // ·µ»Ø×´Ì¬¼Ä´æÆ÷
+ 148   1      }
+ 149          /**************************************************/
+ 150          
+ 151          /**************************************************
+ 152          º¯Êý£ºSPI_Read()
+ 153          
+ 154          ÃèÊö£º
+ 155              ´Óreg¼Ä´æÆ÷¶ÁÒ»×Ö½Ú
+ 156          /**************************************************/
+ 157          uchar SPI_Read(uchar reg)
+ 158          {
+ 159   1      
+ 160   1          uchar reg_val;
+ 161   1            //blink(4);
+ 162   1          CSN = 0;                    // CSNÖÃµÍ£¬¿ªÊ¼´«ÊäÊý¾Ý
+ 163   1            SPI_RW(reg);                // Ñ¡Ôñ¼Ä´æÆ÷
+ 164   1            reg_val = SPI_RW(0);        // È»ºó´Ó¸Ã¼Ä´æÆ÷¶ÁÊý¾Ý
+ 165   1          //delay_ms(200);
+ 166   1            CSN = 1;                    // CSNÀ­¸ß£¬½áÊøÊý¾Ý´«Êä
+ 167   1            return(reg_val);            // ·µ»Ø¼Ä´æÆ÷Êý¾Ý
+ 168   1      }
+ 169          /**************************************************/
+ 170          
+ 171          /**************************************************
+ 172          º¯Êý£ºSPI_Read_Buf()
+ 173          
+ 174          ÃèÊö£º
+ 175              ´Óreg¼Ä´æÆ÷¶Á³öbytes¸ö×Ö½Ú£¬Í¨³£ÓÃÀ´¶ÁÈ¡½ÓÊÕÍ¨µÀ
+ 176              Êý¾Ý»ò½ÓÊÕ/·¢ËÍµØÖ·
+ 177          /**************************************************/
+ 178          uchar SPI_Read_Buf(uchar reg, uchar * pBuf, uchar bytes)
+C51 COMPILER V9.54   RECE                                                                  05/12/2019 13:40:17 PAGE 4   
+
+ 179          {
+ 180   1          uchar status, i;
+ 181   1            CSN = 0;                    // CSNÖÃµÍ£¬¿ªÊ¼´«ÊäÊý¾Ý
+ 182   1            status = SPI_RW(reg);       // Ñ¡Ôñ¼Ä´æÆ÷£¬Í¬Ê±·µ»Ø×´Ì¬×Ö
+ 183   1            for(i=0; i<bytes; i++)
+ 184   1              pBuf[i] = SPI_RW(0);    // Öð¸ö×Ö½Ú´ÓnRF24L01¶Á³ö
+ 185   1            CSN = 1;                    // CSNÀ­¸ß£¬½áÊøÊý¾Ý´«Êä
+ 186   1            return(status);             // ·µ»Ø×´Ì¬¼Ä´æÆ÷
+ 187   1      }
+ 188          /**************************************************/
+ 189          
+ 190          /**************************************************
+ 191          º¯Êý£ºSPI_Write_Buf()
+ 192          
+ 193          ÃèÊö£º
+ 194              °ÑpBuf»º´æÖÐµÄÊý¾ÝÐ´Èëµ½nRF24L01£¬Í¨³£ÓÃÀ´Ð´Èë·¢
+ 195              ÉäÍ¨µÀÊý¾Ý»ò½ÓÊÕ/·¢ËÍµØÖ·
+ 196          /**************************************************/
+ 197          uchar SPI_Write_Buf(uchar reg, uchar * pBuf, uchar bytes)
+ 198          {
+ 199   1          uchar status, i;
+ 200   1            CSN = 0;                    // CSNÖÃµÍ£¬¿ªÊ¼´«ÊäÊý¾Ý
+ 201   1            status = SPI_RW(reg);       // Ñ¡Ôñ¼Ä´æÆ÷£¬Í¬Ê±·µ»Ø×´Ì¬×Ö
+ 202   1            for(i=0; i<bytes; i++)
+ 203   1              SPI_RW(pBuf[i]);        // Öð¸ö×Ö½ÚÐ´ÈënRF24L01
+ 204   1            CSN = 1;                    // CSNÀ­¸ß£¬½áÊøÊý¾Ý´«Êä
+ 205   1            return(status);             // ·µ»Ø×´Ì¬¼Ä´æÆ÷
+ 206   1      }
+ 207          /**************************************************/
+ 208          
+ 209          /**************************************************
+ 210          º¯Êý£ºRX_Mode()
+ 211          
+ 212          ÃèÊö£º
+ 213              Õâ¸öº¯ÊýÉèÖÃnRF24L01Îª½ÓÊÕÄ£Ê½£¬µÈ´ý½ÓÊÕ·¢ËÍÉè±¸µÄÊý¾Ý°ü
+ 214          /**************************************************/
+ 215          void RX_Mode(void)
+ 216          {
+ 217   1          CE = 0;
+ 218   1            SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // ½ÓÊÕÉè±¸½ÓÊÕÍ¨µÀ0Ê¹ÓÃºÍ·¢ËÍÉè±¸
+             -ÏàÍ¬µÄ·¢ËÍµØÖ·
+ 219   1            SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);               // Ê¹ÄÜ½ÓÊÕÍ¨µÀ0×Ô¶¯Ó¦´ð
+ 220   1            SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);           // Ê¹ÄÜ½ÓÊÕÍ¨µÀ0
+ 221   1            SPI_RW_Reg(WRITE_REG + RF_CH, 40);                 // Ñ¡ÔñÉäÆµÍ¨µÀ0x40
+ 222   1            SPI_RW_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);  // ½ÓÊÕÍ¨µÀ0Ñ¡ÔñºÍ·¢ËÍÍ¨µÀÏàÍ¬ÓÐÐ§Êý¾Ý¿í¶È
+ 223   1            SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x07);            // Êý¾Ý´«ÊäÂÊ1Mbps£¬·¢Éä¹¦ÂÊ0dBm£¬µÍÔëÉù·Å´óÆ÷ÔöÒ
+             -æ
+ 224   1            SPI_RW_Reg(WRITE_REG + CONFIG, 0x0f);              // CRCÊ¹ÄÜ£¬16Î»CRCÐ£Ñé£¬ÉÏµç£¬½ÓÊÕÄ£Ê½
+ 225   1          delay_ms(150);
+ 226   1            CE = 1;                                            // À­¸ßCEÆô¶¯½ÓÊÕÉè±¸
+ 227   1      }
+ 228          /**************************************************/
+ 229          
+ 230          /**************************************************
+ 231          º¯Êý£ºTX_Mode()
+ 232          
+ 233          ÃèÊö£º
+ 234              Õâ¸öº¯ÊýÉèÖÃnRF24L01Îª·¢ËÍÄ£Ê½£¬£¨CE=1³ÖÐøÖÁÉÙ10us£©£¬
+ 235              130usºóÆô¶¯·¢Éä£¬Êý¾Ý·¢ËÍ½áÊøºó£¬·¢ËÍÄ£¿é×Ô¶¯×ªÈë½ÓÊÕ
+ 236              Ä£Ê½µÈ´ýÓ¦´ðÐÅºÅ¡£
+ 237          /**************************************************/
+ 238          void TX_Mode(uchar * BUF)
+C51 COMPILER V9.54   RECE                                                                  05/12/2019 13:40:17 PAGE 5   
+
+ 239          {
+ 240   1          CE = 0;
+ 241   1            SPI_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);     // Ð´Èë·¢ËÍµØÖ·
+ 242   1            SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // ÎªÁËÓ¦´ð½ÓÊÕÉè±¸£¬½ÓÊÕÍ¨µÀ0µØÖ·
+             -ºÍ·¢ËÍµØÖ·ÏàÍ¬
+ 243   1            SPI_Write_Buf(WR_TX_PLOAD, BUF, TX_PLOAD_WIDTH);                  // Ð´Êý¾Ý°üµ½TX FIFO
+ 244   1            SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);       // Ê¹ÄÜ½ÓÊÕÍ¨µÀ0×Ô¶¯Ó¦´ð
+ 245   1            SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);   // Ê¹ÄÜ½ÓÊÕÍ¨µÀ0
+ 246   1            SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x0a);  // ×Ô¶¯ÖØ·¢ÑÓÊ±µÈ´ý250us+86us£¬×Ô¶¯ÖØ·¢10´Î
+ 247   1            SPI_RW_Reg(WRITE_REG + RF_CH, 40);         // Ñ¡ÔñÉäÆµÍ¨µÀ0x40
+ 248   1            SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x07);    // Êý¾Ý´«ÊäÂÊ1Mbps£¬·¢Éä¹¦ÂÊ0dBm£¬µÍÔëÉù·Å´óÆ÷ÔöÒæ
+ 249   1            SPI_RW_Reg(WRITE_REG + CONFIG, 0x0e);      // CRCÊ¹ÄÜ£¬16Î»CRCÐ£Ñé£¬ÉÏµç
+ 250   1          delay_ms(150);
+ 251   1          CE = 1;
+ 252   1      }
+ 253          /**************************************************/
+ 254          
+ 255          /**************************************************
+ 256          º¯Êý£ºCheck_ACK()
+ 257          
+ 258          ÃèÊö£º
+ 259              ¼ì²é½ÓÊÕÉè±¸ÓÐÎÞ½ÓÊÕµ½Êý¾Ý°ü£¬Éè¶¨Ã»ÓÐÊÕµ½Ó¦´ðÐÅ
+ 260              ºÅÊÇ·ñÖØ·¢
+ 261          /**************************************************/
+ 262          uchar Check_ACK(bit clear)
+ 263          {
+ 264   1          while(IRQ);
+ 265   1          sta = SPI_RW(NOP);                    // ·µ»Ø×´Ì¬¼Ä´æÆ÷
+ 266   1          if(TX_DS)
+ 267   1          {
+ 268   2              //blink(3);
+ 269   2          }
+ 270   1          //blink(5);
+ 271   1          if(MAX_RT)
+ 272   1              if(clear)                         // ÊÇ·ñÇå³ýTX FIFO£¬Ã»ÓÐÇå³ýÔÚ¸´Î»MAX_RTÖÐ¶Ï±êÖ¾ºóÖØ·¢
+ 273   1                  SPI_RW(FLUSH_TX);
+ 274   1          SPI_RW_Reg(WRITE_REG + STATUS, sta);  // Çå³ýTX_DS»òMAX_RTÖÐ¶Ï±êÖ¾
+ 275   1          IRQ = 1;
+ 276   1          if(TX_DS)
+ 277   1              return(0x00);
+ 278   1          else
+ 279   1              return(0xff);
+ 280   1      }
+ 281          /**************************************************/
+ 282          
+ 283          /**************************************************
+ 284          º¯Êý£ºCheckButtons()
+ 285          
+ 286          ÃèÊö£º
+ 287              ¼ì²é°´¼üÊÇ·ñ°´ÏÂ£¬°´ÏÂÔò·¢ËÍÒ»×Ö½ÚÊý¾Ý
+ 288          /**************************************************/
+ 289          void CheckButtons()
+ 290          {
+ 291   1          P3 |= 0x00;
+ 292   1          if(!(P3 & 0x01))                    // ¶ÁÈ¡P3^0×´Ì¬
+ 293   1          {
+ 294   2              delay_ms(20);
+ 295   2              if(!(P3 & 0x01))                // ¶ÁÈ¡P3^0×´Ì¬
+ 296   2              {
+ 297   3                  TX_BUF[0] = ~DATA;          // Êý¾ÝËÍµ½»º´æ
+ 298   3                  //TX_BUF[0] = 0xff;          // Êý¾ÝËÍµ½»º´æ
+ 299   3                  TX_Mode(TX_BUF);            // °ÑnRF24L01ÉèÖÃÎª·¢ËÍÄ£Ê½²¢·¢ËÍÊý¾Ý            
+C51 COMPILER V9.54   RECE                                                                  05/12/2019 13:40:17 PAGE 6   
+
+ 300   3                  //LED = ~DATA;                // Êý¾ÝËÍµ½LEDÏÔÊ¾
+ 301   3                  Check_ACK(0);               // µÈ´ý·¢ËÍÍê±Ï£¬Çå³ýTX FIFO
+ 302   3                  delay_ms(250);
+ 303   3                  delay_ms(250);
+ 304   3                  LED = 1;                    // ¹Ø±ÕLED
+ 305   3                  RX_Mode();                    // ÉèÖÃÎª½ÓÊÕÄ£Ê½S
+ 306   3                  while(!(P3 & 0x01));
+ 307   3                  DATA <<= 1;
+ 308   3                  if(!DATA)
+ 309   3                      DATA = 0x01;
+ 310   3              }
+ 311   2          }
+ 312   1      }
+ 313          /**************************************************/
+ 314          
+ 315          void blink(char i)
+ 316          {
+ 317   1          while(i--)
+ 318   1          {
+ 319   2              LED = 1;
+ 320   2              delay_ms(500);
+ 321   2              LED = 0;
+ 322   2              delay_ms(500);
+ 323   2          }
+ 324   1      
+ 325   1      }
+ 326          
+ 327          /**************************************************
+ 328          º¯Êý£ºmain()
+ 329          
+ 330          ÃèÊö£º
+ 331              Ö÷º¯Êý
+ 332          /**************************************************/
+ 333          void main(void)
+ 334          {
+ 335   1          init_io();                      // ³õÊ¼»¯IO
+ 336   1          RX_Mode();                      // ÉèÖÃÎª½ÓÊÕÄ£Ê½
+ 337   1      
+ 338   1          while(1)
+ 339   1          {
+ 340   2              sta = SPI_Read(STATUS);      // ¶Á×´Ì¬¼Ä´æÆ÷
+ 341   2              //delay_ms(200);
+ 342   2              if(RX_DR)                  // ÅÐ¶ÏÊÇ·ñ½ÓÊÜµ½Êý¾Ý
+ 343   2              {
+ 344   3                  SPI_Read_Buf(RD_RX_PLOAD, RX_BUF, TX_PLOAD_WIDTH);  // ´ÓRX FIFO¶Á³öÊý¾Ý
+ 345   3                  flag = 1;
+ 346   3              }
+ 347   2              SPI_RW_Reg(WRITE_REG + STATUS, sta);  // Çå³ýRX_DSÖÐ¶Ï±êÖ¾
+ 348   2      
+ 349   2              if(flag)                   // ½ÓÊÜÍê³É
+ 350   2              {
+ 351   3                  if(RX_BUF[0] == 1)
+ 352   3                  {
+ 353   4                      blink(2);
+ 354   4                  }
+ 355   3      
+ 356   3                  if(RX_BUF[0] == 2)
+ 357   3                  {
+ 358   4                      blink(4);
+ 359   4                  }
+ 360   3                  flag = 0;               // Çå±êÖ¾
+ 361   3                  delay_ms(250);
+C51 COMPILER V9.54   RECE                                                                  05/12/2019 13:40:17 PAGE 7   
+
+ 362   3                  delay_ms(250);
+ 363   3                  LED = 1;               // ¹Ø±ÕLED
+ 364   3              }
+ 365   2          }
+ 366   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    521    ----
+   CONSTANT SIZE    =      5    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     11      13
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

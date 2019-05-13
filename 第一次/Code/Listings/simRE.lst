@@ -1,0 +1,295 @@
+C51 COMPILER V9.54   SIMRE                                                                 05/12/2019 14:50:37 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE SIMRE
+OBJECT MODULE PLACED IN .\Objects\simRE.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE src\C\simRE.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src\H;.\src\H) DEBUG OBJ
+                    -ECTEXTEND PRINT(.\Listings\simRE.lst) TABS(2) OBJECT(.\Objects\simRE.obj)
+
+line level    source
+
+   1          /************************************************************
+   2          程序说明：
+   3          本程序运行后如果gprs模块找到服务商信号可实现接打电话发送短信等功能
+   4          
+   5          *************************************************************/
+   6          #include <REG51.H>
+   7          #include <string.H>
+   8          #include <sim900a.h>
+   9          #define uchar unsigned char
+  10          #define uint unsigned int
+  11          //以下是板子上LED的配置，把Px_x改成自己对应的脚。
+  12          //以下是你的51单片机的晶振大小
+  13          
+  14          sbit P10=P1^0;
+  15          sbit P11=P1^1;
+  16          sbit P12=P1^2;
+  17          sbit P13=P1^3;
+  18          sbit P14=P1^4;
+  19          sbit P15=P1^5;
+  20          
+  21          #define FOSC_110592M
+  22          //#define FOSC_12M
+  23          //以下是开机后拨打的手机号，改成自己想要大的号码即可。
+  24          uchar num[] = "ATD10086;\r\n";
+  25          //以下是GSM模块返回数据
+  26          uchar rec_data[50];
+  27          uchar rec_num;
+  28          //注意，无论接收到信号还是发送完信号，都会进中断服务程序的
+  29          /*初始化程序（必须使用，否则无法收发），次程序将会使用定时器1*/
+  30          
+  31          
+  32          /*串行通讯中断，收发完成将进入该中断*///如：+CMTI:"SM",2
+  33          void Serial_interrupt() interrupt 4 
+  34          {
+  35   1      
+  36   1        uchar temp;
+  37   1        temp=SBUF;
+  38   1        rec_data[rec_num++]=temp;
+  39   1        if(rec_num>=50)
+  40   1          rec_num=0;
+  41   1        else
+  42   1          ;
+  43   1        RI=0;//接收中断信号清零，表示将继续接收
+  44   1      
+  45   1      }
+  46          
+  47          //串行口连续发送char型数组，遇到终止号/0将停止
+  48          
+  49          void Uart1BYTE(uchar temp)
+  50          {
+  51   1          SBUF=temp;
+  52   1          while(!TI);//等待发送完成信号（TI=1）出现
+  53   1          TI=0;
+  54   1      }
+C51 COMPILER V9.54   SIMRE                                                                 05/12/2019 14:50:37 PAGE 2   
+
+  55          
+  56          uchar hand(uchar *ptr)
+  57          {
+  58   1        if(strstr(rec_data,ptr)!=NULL)
+  59   1          return 1;
+  60   1        else
+  61   1          return 0;
+  62   1      }
+  63          
+  64          void clear_rec_data()
+  65          {
+  66   1        uchar i;
+  67   1        for(i=0;i<strlen(rec_data);i++)
+  68   1        {
+  69   2          rec_data[i]='0';
+  70   2        
+  71   2        }
+  72   1        rec_num=0;
+  73   1      
+  74   1      
+  75   1      }
+  76          //延时函数大概是1s钟，不过延时大的话不准...
+  77          
+  78          
+  79          void xmain()
+  80          {
+  81   1        uchar i = 0;
+  82   1        SerialInti();
+  83   1      
+  84   1        //Uart1Sends(num);
+  85   1        //建议在单片机控制GSM模块前，加上两条 AT 指令，用来同步模块与单片机的波特率
+  86   1        Uart1Sends("ATI\r\n"); //握手
+  87   1        while(!hand("OK")) 
+  88   1        {
+  89   2          clear_rec_data();
+  90   2          i++;
+  91   2          Uart1Sends("ATI\r\n");//
+  92   2          DelaySec(1);//延时
+  93   2          if(i>=5)
+  94   2          {
+  95   3            break;
+  96   3            //return;
+  97   3          }
+  98   2          else
+  99   2            ;
+ 100   2        }
+ 101   1        P10=0;
+ 102   1        clear_rec_data();//删除存储的GSM模块返回的数据，以便于以后继续判断
+ 103   1        DelaySec(1);//延时
+ 104   1        Uart1Sends("AT+CSQ\r\n");//信号质量
+ 105   1        DelaySec(1);//延时
+ 106   1        i=0;
+ 107   1        while(!hand("OK")) //检测此条指令GSM模块是否执行OK
+ 108   1        {
+ 109   2          clear_rec_data();
+ 110   2          i++;
+ 111   2          Uart1Sends("AT+CSQ\r\n");//
+ 112   2          DelaySec(1);//延时
+ 113   2          if(i>=5)
+ 114   2          {
+ 115   3            break;
+ 116   3            //return;
+C51 COMPILER V9.54   SIMRE                                                                 05/12/2019 14:50:37 PAGE 3   
+
+ 117   3          }
+ 118   2          else
+ 119   2            ;
+ 120   2        }
+ 121   1        P11=0;
+ 122   1        clear_rec_data();
+ 123   1        DelaySec(1);//延时
+ 124   1        Uart1Sends("AT+CPIN?\r\n");//查看是否读到手机卡
+ 125   1        DelaySec(1);//延时
+ 126   1        i=0;
+ 127   1        while(!hand("READY")) //检测SIM模块是否收到SIM卡READY
+ 128   1        {
+ 129   2          clear_rec_data();
+ 130   2          i++;
+ 131   2          Uart1Sends("AT+CPIN?\r\n");//是否注册到网络
+ 132   2          DelaySec(1);//延时
+ 133   2          if(i>=5)
+ 134   2          {
+ 135   3            break;
+ 136   3            //return;
+ 137   3          }
+ 138   2          else
+ 139   2            ;   
+ 140   2        }
+ 141   1        P12=0;
+ 142   1        Uart1Sends("AT+COPS?\r\n");//是否注册到网络
+ 143   1        DelaySec(1);//延时
+ 144   1        i=0;
+ 145   1        while(!hand("CHINA")) //检测是否收到模块返回的CHINA
+ 146   1        {
+ 147   2          clear_rec_data();
+ 148   2          i++;
+ 149   2          Uart1Sends("AT+COPS?\r\n");//是否注册到网络
+ 150   2          DelaySec(1);//延时
+ 151   2          if(i>=5)
+ 152   2          {
+ 153   3            break;
+ 154   3            //return;
+ 155   3          }
+ 156   2          else
+ 157   2            ;   
+ 158   2        }
+ 159   1        P13=0;
+ 160   1        clear_rec_data();
+ 161   1        DelaySec(1);//延时
+ 162   1      //以下是发送英文短信短信
+ 163   1        Uart1Sends("AT+CMMI=2,1\r\n"); //开回显
+ 164   1        DelaySec(1);//延时
+ 165   1        Uart1Sends("AT+CMGF=1\r\n");  //方式1
+ 166   1        DelaySec(1);//延时
+ 167   1        Uart1Sends("AT+CMGS=\"10086\"\r\n");  //此处修改短信接收方电话号
+ 168   1        DelaySec(1);//延时
+ 169   1        Uart1Sends("ye");  //此处修改短信内容
+ 170   1        DelaySec(1);//延时
+ 171   1        Uart1BYTE(0X1A);
+ 172   1        DelaySec(1);//延时
+ 173   1        DelaySec(1);//延时
+ 174   1        DelaySec(1);//延时
+ 175   1        DelaySec(1);//延时
+ 176   1        P14=0;
+ 177   1      //发送英文短信结束
+ 178   1        Uart1Sends("AT+CMGD=1\r\n");//删除SIM卡中的内容
+C51 COMPILER V9.54   SIMRE                                                                 05/12/2019 14:50:37 PAGE 4   
+
+ 179   1        DelaySec(1);//延时
+ 180   1        //以下是拨打10086代码
+ 181   1        Uart1Sends(num);  //拨打10086
+ 182   1        DelaySec(1);//延时
+ 183   1        DelaySec(1);//延时
+ 184   1        DelaySec(1);//延时
+ 185   1        DelaySec(1);//延时
+ 186   1        //拨打电话代码结束
+ 187   1        //以下内容没有实际测试，仅供参考
+ 188   1        while(1)
+ 189   1        {
+ 190   2          if(hand("CMTI"))
+ 191   2          {
+ 192   3            P13=0;
+ 193   3            clear_rec_data();
+ 194   3            DelaySec(1);//延时
+ 195   3            Uart1Sends("AT+CMGR=1\r\n");//
+ 196   3            DelaySec(1);//延时
+ 197   3            i=0;
+ 198   3            while(!hand("OK")) 
+ 199   3            {
+ 200   4              clear_rec_data();
+ 201   4              i++;
+ 202   4              Uart1Sends("AT+CMGR=1\r\n");//
+ 203   4              DelaySec(1);//延时
+ 204   4              if(i>=2)   //chucuo
+ 205   4              {
+ 206   5                break;
+ 207   5                //return;
+ 208   5              }
+ 209   4              else
+ 210   4                ;   
+ 211   4            }
+ 212   3            clear_rec_data();
+ 213   3            DelaySec(1);//延时
+ 214   3            if(hand("relay on"))
+ 215   3            {
+ 216   4              P14=0;
+ 217   4              //break;
+ 218   4            }
+ 219   3            else if(hand("relay off"))
+ 220   3            {
+ 221   4              
+ 222   4              P15=0;
+ 223   4              //break;
+ 224   4            }
+ 225   3            else
+ 226   3            {
+ 227   4              //break;
+ 228   4            }
+ 229   3            Uart1Sends("AT+CMGD=1\r\n");//
+ 230   3            DelaySec(1);//延时
+ 231   3      
+ 232   3          
+ 233   3          }
+ 234   2          else if(hand("ring")) //电话进来 挂断电话
+ 235   2          {
+ 236   3            
+ 237   3            Uart1Sends("ATH\r\n");//
+ 238   3            DelaySec(1);//延时
+ 239   3            i=0;
+ 240   3            while(!hand("OK")) 
+C51 COMPILER V9.54   SIMRE                                                                 05/12/2019 14:50:37 PAGE 5   
+
+ 241   3            {
+ 242   4              clear_rec_data();
+ 243   4              i++;
+ 244   4              Uart1Sends("ATH\r\n");//
+ 245   4              DelaySec(1);//延时
+ 246   4              if(i>=2)
+ 247   4              {
+ 248   5                break;
+ 249   5                //return;
+ 250   5              }
+ 251   4              else
+ 252   4                ;   
+ 253   4            }
+ 254   3            clear_rec_data();
+ 255   3            DelaySec(1);//延时    
+ 256   3        
+ 257   3          }
+ 258   2          else
+ 259   2          {
+ 260   3            ;
+ 261   3          }
+ 262   2        }
+ 263   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    752    ----
+   CONSTANT SIZE    =    158    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     63       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

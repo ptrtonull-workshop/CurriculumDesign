@@ -1,0 +1,305 @@
+C51 COMPILER V9.54   CSB                                                                   05/12/2019 12:29:20 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE CSB
+OBJECT MODULE PLACED IN csb.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE csb.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include<reg52.h>               
+   2          #include<intrins.h>
+   3          
+   4          #define uchar unsigned char
+   5          #define uint unsigned int
+   6          ///////////////////////////////////////////////////////
+   7          bit      flag =0;
+   8          unsigned int  time=0;
+   9          unsigned int  timer=0;
+  10          
+  11          bit flag_sb;         //是否回波
+  12          unsigned char key_num=0;
+  13          unsigned char bijiao_flag=0;
+  14          unsigned char car_num=0;  //车位数值           
+  15          unsigned char Set_car_H=4;  //设置车数数值
+  16          signed char   s_car_num=0;  //剩余车位数值  
+  17          
+  18          uchar flag1,flag2;    //设置 2 个标志位
+  19          uchar flag3,flag4;    //设置 2 个标志位
+  20          uchar flag5,flag6;    //设置 2 个标志位
+  21          uchar flag7,flag8;    //设置 2 个标志位
+  22          
+  23          uchar N1=0,N11=0;   //有车或者没有标志
+  24          uchar N2=0,N22=0;
+  25          uchar N3=0,N33=0;
+  26          uchar N4=0,N44=0;      
+  27                         
+  28          uint wei_x=20;         //安全距离
+  29          
+  30          uchar flag_monden=0;    //模式
+  31          uchar baojing_moden=0;
+  32          
+  33          uchar key_flag=1;
+  34          unsigned int S11=0;
+  35          void Shumaguan(uint num);
+  36          void Conut(void);
+  37          
+  38          #include "shumaguan.h"
+  39          #include "NRF24l01.h"
+  40          //#include "eeprom.h"
+  41          
+  42          
+  43          void delay_ms(uint z)
+  44          {
+  45   1        uint a,b;
+  46   1        for(a=z;z>0;z--)
+  47   1        for(b=50;b>0;b--);  
+  48   1      }
+  49          void Conut(void)
+  50          {
+  51   1         time=TH0*256+TL0;
+  52   1         TH0=0;
+  53   1         TL0=0; 
+  54   1         S=(time*1.87)/100;     //算出来是CM
+  55   1         if((S>=500)||flag==1) //超出测量范围
+C51 COMPILER V9.54   CSB                                                                   05/12/2019 12:29:20 PAGE 2   
+
+  56   1         {   
+  57   2             flag=0;
+  58   2             S=888;
+  59   2         }
+  60   1      
+  61   1      }
+  62          
+  63          ////////////////////////////////////////////////////////////////////////////////////////////////////
+  64           void campare_display() //比较              四个车位是否在位置上 
+  65          {
+  66   1       
+  67   1             if((N1==1)||(N2==1)||(N3==1)||(N4==1)) {
+  68   2                   if(N1==1){
+  69   3                       left_up_red=0; 
+  70   3                     TxBuf[5]='A';               
+  71   3                  }
+  72   2                    else{
+  73   3                       left_up_red=1; 
+  74   3                     TxBuf[5]=0;  
+  75   3                }
+  76   2                if(N2==1){
+  77   3      
+  78   3                     left_down_red=0; 
+  79   3                     TxBuf[6]='B';
+  80   3                    
+  81   3                } else{
+  82   3                    left_down_red=1;
+  83   3                    TxBuf[6]=0; 
+  84   3                }
+  85   2      /////////////////////////////////////////////////////////////
+  86   2                if(N3==1){
+  87   3                     right_down_red =0; 
+  88   3                    TxBuf[7]='C'; 
+  89   3                } else{
+  90   3                                 right_down_red =1; 
+  91   3                    TxBuf[7]=0; 
+  92   3                }
+  93   2                if(N4==1){
+  94   3                    right_up_red =0; 
+  95   3                    TxBuf[8]='D';   
+  96   3                } else{
+  97   3                     right_up_red =1; 
+  98   3                    TxBuf[8]=0;
+  99   3                }
+ 100   2                  
+ 101   2              }  else{
+ 102   2      //            Lcd_ShowSring(1,0,"     ");
+ 103   2                             left_down_red=1;left_up_red=1;  
+ 104   2                   right_down_red =1; right_up_red =1;  
+ 105   2                
+ 106   2              }
+ 107   1                        
+ 108   1      }
+ 109          void  check_car()   //统计车位数函数
+ 110          {
+ 111   1      
+ 112   1        if(S2<wei_x)        // 小于20cm
+ 113   1          {
+ 114   2            
+ 115   2            flag1=1; //标志位flag1          
+ 116   2             if(flag1==1)//  flag1=1 传感器A 说明有车
+ 117   2            {
+C51 COMPILER V9.54   CSB                                                                   05/12/2019 12:29:20 PAGE 3   
+
+ 118   3                 delay_ms(5);
+ 119   3                if(N1==0){            
+ 120   4                  car_num++;   //车位数值加1
+ 121   4                  N1=1;
+ 122   4                 }            //
+ 123   3                flag1=0;    //清标志位
+ 124   3                flag2=1;    //启动标志
+ 125   3                N11=0;
+ 126   3            } 
+ 127   2          } 
+ 128   1           else{     //否则检测不到车
+ 129   2      
+ 130   2              if(N11==0){           
+ 131   3                   car_num--;   //车位数值减1
+ 132   3                   TxBuf[5]=0;
+ 133   3                    N11=1;
+ 134   3                 }
+ 135   2                
+ 136   2                   N1=0;
+ 137   2            }
+ 138   1      //////////////////////////////////////////////////////////////////////////////////////////////////////////
+             -/////
+ 139   1            if(S1<wei_x)        // 小于20cm
+ 140   1          {
+ 141   2      
+ 142   2            flag3=1; ////标志位flag3
+ 143   2            
+ 144   2            if(flag3==1)//  传感器B  红外对管检测到 说明有车
+ 145   2            {
+ 146   3                  delay_ms(5);
+ 147   3                if(N2==0){            
+ 148   4                  car_num++;       //车位数值加1
+ 149   4                  N2=1;
+ 150   4                 }           
+ 151   3                flag3=0;    //清空标志位
+ 152   3                flag4=1;     //启动标志
+ 153   3                N22=0;
+ 154   3              
+ 155   3           }
+ 156   2            } 
+ 157   1             
+ 158   1          else {     //否则检测不到车
+ 159   2      
+ 160   2              if(N22==0){           
+ 161   3                   car_num--;     //车位数值减1
+ 162   3                   TxBuf[6]=0;
+ 163   3                    N22=1;
+ 164   3                 }
+ 165   2                
+ 166   2                   N2=0;
+ 167   2            } 
+ 168   1      /////////////////////////////////////////////////////////////////////////////////////////////B区域  
+ 169   1            if(S3<wei_x)
+ 170   1            {
+ 171   2            flag5=1; ////标志位flag5
+ 172   2            if(flag5==1)//  传感器C 红外对管检测到 说明有车
+ 173   2              {
+ 174   3                  delay_ms(5);
+ 175   3                if(N3==0){            
+ 176   4                  car_num++;       //车位数值加1
+ 177   4                  N3=1;
+ 178   4                 }            //
+C51 COMPILER V9.54   CSB                                                                   05/12/2019 12:29:20 PAGE 4   
+
+ 179   3                flag5=0;    //清空标志位
+ 180   3                flag6=1;    //启动标志
+ 181   3                N33=0;
+ 182   3              
+ 183   3             }
+ 184   2            }
+ 185   1          
+ 186   1             
+ 187   1           else {     //否则检测不到车
+ 188   2      
+ 189   2              if(N33==0){           
+ 190   3                   car_num--;
+ 191   3                   TxBuf[7]=0;  //车位数值减1
+ 192   3                    N33=1;
+ 193   3                 }
+ 194   2                
+ 195   2                   N3=0;
+ 196   2            } 
+ 197   1      ///////////////////////////////////////////////////////////////////////////////////////////////
+ 198   1            if(S4<wei_x)
+ 199   1            {
+ 200   2            flag7=1; ////标志位flag5
+ 201   2            if(flag7==1)//  传感器C 红外对管检测到 说明有车
+ 202   2              {
+ 203   3                  delay_ms(5);
+ 204   3                if(N4==0){            
+ 205   4                  car_num++;       //车位数值加1
+ 206   4                  N4=1;
+ 207   4                 }            //
+ 208   3                flag7=0;    //清空标志位
+ 209   3                flag8=1;    //启动标志
+ 210   3                N44=0;
+ 211   3              
+ 212   3             }
+ 213   2            }
+ 214   1          
+ 215   1             
+ 216   1           else {     //否则检测不到车
+ 217   2      
+ 218   2              if(N44==0){           
+ 219   3                   car_num--;
+ 220   3                   TxBuf[8]=0;  //车位数值减1
+ 221   3                    N44=1;
+ 222   3                 }
+ 223   2                
+ 224   2                   N4=0;
+ 225   2            }
+ 226   1      
+ 227   1      
+ 228   1          
+ 229   1      }
+ 230          ///////////////////////////////////////////////////////////////
+ 231          //主函数    
+ 232           void main()
+ 233          {     
+ 234   1                  uchar num;
+ 235   1      //      read_eeprom();   //读出保存数据   
+ 236   1              init_NRF24L01(); //初始化无线
+ 237   1            init();
+ 238   1            TIM2Inital();
+ 239   1            TxBuf[0]=1;   //模块         发送
+ 240   1            while(1)
+C51 COMPILER V9.54   CSB                                                                   05/12/2019 12:29:20 PAGE 5   
+
+ 241   1            {   
+ 242   2                 ////////////////////////////////////////////////////////////////
+ 243   2                if(Set_car_H>=car_num){  //设置的车位数大于车数 
+ 244   3                      s_car_num=Set_car_H-car_num;    //剩余车位
+ 245   3                          
+ 246   3                    }  
+ 247   2                TxBuf[1]=car_num/10;//十位
+ 248   2                    TxBuf[2]=car_num%10;//个位 
+ 249   2              TxBuf[3]=s_car_num/10;//十位
+ 250   2                    TxBuf[4]=s_car_num%10;//个位
+ 251   2      
+ 252   2              num++;
+ 253   2              if(num==2){    //模块
+ 254   3              num=0;
+ 255   3              nRF24L01_TxPacket(TxBuf);
+ 256   3                  }
+ 257   2                  SPI_RW_Reg(WRITE_REG+STATUS,0XFF);//清除接收、发送数据，最多重发中断；RX_FIFO、TX_FIFO寄存器清空
+ 258   2              
+ 259   2                  if(flag_monden==0)
+ 260   2                {     
+ 261   3               
+ 262   3        
+ 263   3      
+ 264   3                }
+ 265   2                 campare_display();
+ 266   2                 check_car();
+ 267   2                 display(&count_flag);   //显示
+ 268   2                 //Shumaguan(Set_car_H);
+ 269   2               // fenjie(data_num,s_car_num);
+ 270   2                jisuan(Set_car_H,s_car_num);
+ 271   2             }
+ 272   1       }
+ 273          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1405    ----
+   CONSTANT SIZE    =     25    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     75      21
+   IDATA SIZE       =     36    ----
+   BIT SIZE         =      4    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,223 @@
+C51 COMPILER V9.54   TEST                                                                  05/12/2019 14:36:39 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TEST
+OBJECT MODULE PLACED IN .\Objects\test.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE src\C\test.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src\H;.\src\H) DEBUG OBJE
+                    -CTEXTEND PRINT(.\Listings\test.lst) TABS(2) OBJECT(.\Objects\test.obj)
+
+line level    source
+
+   1          #include "reg52.h" //µ¥Æ¬»úÍ·ÎÄ¼þ
+   2          #include ¡°¶string.h¡·
+*** ERROR C100 IN LINE 2 OF src\C\test.c: unprintable character 0xA1 skipped
+*** ERROR C100 IN LINE 2 OF src\C\test.c: unprintable character 0xB0 skipped
+*** ERROR C100 IN LINE 2 OF src\C\test.c: unprintable character 0xB6 skipped
+*** ERROR C129 IN LINE 2 OF src\C\test.c: missing ';' before '.'
+*** ERROR C309 IN LINE 2 OF src\C\test.c: bad or missing filename
+*** WARNING C318 IN LINE 2 OF src\C\test.c: can't open file ''
+   3          #include ¡°lcd1602_drv.h¡±
+*** ERROR C309 IN LINE 3 OF src\C\test.c: bad or missing filename
+*** WARNING C318 IN LINE 3 OF src\C\test.c: can't open file ''
+   4          #define uchar unsigned char
+   5          #define uint unsigned int
+   6          #define Rx_data_length 110
+   7          uchar Admin_num£Û11£Ý=¡°xxxxxxxxxxx¡±;
+   8          //ÊÖ»úºÅÂë uchar i£¬j;¡
+   9          bit Response_receive_SMS_flag=0;
+  10          sbit RS_1602=P2^6; //1602Êý¾Ý/ÃüÁîÑ¡ÔñÒý½Å
+  11          sbit LCD_RW=P2^5; //1602¶ÁÐ´Òý½Å
+  12          bit E_1602=P2^7; //1602Ê¹ÄÜÒý½Å
+  13          uchar Rx_bit£¬i;
+  14          uchar xdata Rx_data£ÛRx_data_length£Ý;
+  15          uchar w£Û£Ý=¡°WaiTIng ¡£¡£¡£¡£¡£¡£ ¡±;
+  16          
+  17          void Response_receive_SMS£¨void£©;
+  18          void Uart_SendChar£¨uchar ch£©;
+  19          void Uart_SendString£¨uchar *String£©;
+  20          void uart_init£¨void£©;
+  21          void Clear_Rxdata£¨uchar length£©;
+  22          
+  23          void delay£¨uint xms£©
+  24          {
+  25            uint i£¬j; for£¨i=xms;i¡·0;i--£©
+  26            for£¨j=100;j¡·0;j--£©;
+  27          }
+  28          void main£¨void£©
+  29          {
+  30          ¡¡¡¡uint aa=0£» EA=1; //¿ª×ÜÖÐ¶Ï
+  31          ¡¡  LCD_RW=0; //LCD RW Ö÷³ÌÐò½ÓµØÒ»Ö±µÈÓÚ0
+  32          ¡¡¡¡uart_init£¨£©; //´®¿Ú³õÊ¼»¯
+  33          ¡¡¡¡lcd_init£¨£©; //Òº¾§ÆÁÏÔÊ¾³õÊ¼»¯
+  34          ¡¡¡¡Rx_bit=0;
+  35          ¡¡¡¡Uart_SendString£¨¡°AT+CLIP=1\r\n¡±£©;
+  36          ¡¡¡¡delay£¨500£©;
+  37          ¡¡¡¡Uart_SendString£¨¡°AT+CMGF=1\r\n¡±£©; //ÉèÖÃsim900Ä£¿éÎªÓ¢ÎÄ·½Ê½·¢ËÍ¶ÌÐÅ
+  38          ¡¡¡¡delay£¨500£©;
+  39          ¡¡¡¡Uart_SendString£¨¡°AT+CMGD=1\r\n¡±£©; //Çå³ýËùÓÐ¶ÌÐÅ
+  40          ¡¡¡¡delay£¨500£©;
+  41          ¡¡¡¡Uart_SendString£¨¡°AT+CSCS=\¡±GSM\¡°\r¡±£©; //ÉèÖÃsim900Ä£¿éGSM×Ö·û¼¯
+  42          ¡¡¡¡delay£¨500£©;
+  43          ¡¡¡¡Uart_SendString£¨¡°AT+CMGF=1\r¡±£©; //ÉèÖÃsim900Ä£¿éÎªÓ¢ÎÄ·½Ê½·¢ËÍ¶ÌÐÅ
+  44          ¡¡¡¡delay£¨500£©;
+  45          ¡¡¡¡Clear_Rxdata£¨Rx_data_length£©;
+  46          ¡¡¡¡delay£¨500£©;
+C51 COMPILER V9.54   TEST                                                                  05/12/2019 14:36:39 PAGE 2   
+
+  47          ¡¡¡¡memset£¨Rx_data£¬¡® ¡¯£¬sizeof£¨Rx_data£©£©; //Rx_dataÊý×éÖÐÔªËØ¶¼Îª¿Õ¸ñ
+  48          ¡¡¡¡write_1602com£¨one£©;
+  49          ¡¡¡¡for£¨i=0;i¡¶16;i++£©
+  50          ¡¡¡¡{
+  51          ¡¡¡¡  while£¨1£©
+  52          ¡¡¡¡{
+  53          ¡¡¡¡EA=1;
+  54          ¡¡¡¡EX0=1; //¿ªÍâ²¿ÖÐ¶Ï0
+  55          ¡¡¡¡IT0=0; //Âö³å´¥·¢·½Ê½
+  56          ¡¡¡¡Response_receive_SMS£¨£©; //Ñ­»·¼ì²âÊÇ·ñÊÕµ½¶ÌÐÅ£¬ÈôÊÕµ½¶ÌÐÅÔò Response_receive_SMS_flag==1
+  57          ¡¡¡¡delay£¨100£©;
+  58          ¡¡¡¡Rx_bit=0;
+  59          ¡¡¡¡if£¨Response_receive_SMS_flag==1£©
+  60          ¡¡¡¡{
+  61          ¡¡¡¡Uart_SendString£¨¡°AT+CMGR=1\r\n¡±£©; //¶ÌÐÅ¶ÁÈ¡
+  62          ¡¡¡¡delay£¨2000£©;
+  63          ¡¡¡¡write_1602com£¨one£©;
+  64          ¡¡¡¡for£¨i=0;i¡¶16;i++£©
+  65          ¡¡¡¡{
+  66          ¡¡¡¡  write_1602dat£¨Rx_data£Û69+i£Ý£©;
+  67          ¡¡¡¡}
+  68          ¡¡¡¡if£¨Rx_data£Û69£Ý==¡®x¡¯&&Rx_data£Û70£Ý==¡®x¡¯&&Rx_data£Û71£Ý==¡®ax¡¯&&Rx_data£Û72£Ý==¡®x¡¯&&Rx_data£Û
+             -73£Ý==¡®x¡¯£© //ÅÐ¶ÏµÄ¶ÌÐÅÄÚÈÝ£¬¿ÉÒÔ²»Ö¹5Î»
+  69          
+  70          ¡¡¡¡{
+  71          
+  72          ¡¡¡¡aa=1£»
+  73          
+  74          ¡¡¡¡}
+  75          
+  76          ¡¡¡¡Response_receive_SMS_flag=0;
+  77          
+  78          ¡¡¡¡Clear_Rxdata£¨Rx_data_length£©;
+  79          
+  80          ¡¡¡¡delay£¨100£©;
+  81          
+  82          ¡¡¡¡Uart_SendString£¨¡°AT+CMGD=1\r\n¡±£©; //Çå³ýËùÓÐ¶ÌÐÅ
+  83          ¡¡¡¡delay£¨100£©;
+  84          ¡¡¡¡}
+  85          ¡¡¡¡delay£¨1000£©;
+  86          ¡¡¡¡if£¨aa==1£©
+  87          ¡¡¡¡{
+  88          ¡¡¡¡delay£¨1000£©;
+  89          ¡¡¡¡Uart_SendString£¨¡°AT+CMGS=\¡±¡°£©;
+  90          ¡¡¡¡for£¨j=0;j¡¶11;j++£©
+  91          ¡¡¡¡{
+  92          ¡¡¡¡SBUF=Admin_num£Ûj£Ý;
+  93          ¡¡¡¡while£¨TI==0£©;
+  94          ¡¡¡¡TI=0;
+  95          ¡¡¡¡}
+  96          ¡¡¡¡Uart_SendString£¨¡°\¡±\r¡°£©;
+  97          ¡¡¡¡delay£¨200£©;
+  98          ¡¡¡¡Uart_SendString£¨¡±xxx¡°£©; //·µ»ØµÄ¶ÌÐÅÄÚÈÝ
+  99          ¡¡¡¡delay£¨300£©;
+ 100          ¡¡¡¡Uart_SendChar£¨0x1a£©;
+ 101          ¡¡¡¡delay£¨1000£©;
+ 102          ¡¡¡¡aa=0£»}
+ 103          ¡¡¡¡}
+ 104          ¡¡¡¡}
+ 105          ¡¡¡¡void uart£¨£© interrupt 4
+ 106          ¡¡¡¡{
+ 107          ¡¡¡¡ES=0;
+C51 COMPILER V9.54   TEST                                                                  05/12/2019 14:36:39 PAGE 3   
+
+ 108          ¡¡¡¡if£¨RI==1£© //µ±Ó²¼þ½Ó ÊÕµ½Ò»¸öÊý¾ÝÊ±£¬RI»áÖÃÎ»
+ 109          ¡¡¡¡{
+ 110          ¡¡¡¡if£¨SBUF£¡=0x0d&&SBUF£¡=0x0a&&SBUF£¡=¡® ¡¯£© //È¥³ýËùÓÐµÄ¿Õ¸ñ
+ 111          ¡¡¡¡{
+ 112          ¡¡¡¡Rx_data£ÛRx_bit£Ý=SBUF;
+ 113          ¡¡¡¡Rx_bit++;
+ 114          ¡¡¡¡}
+ 115          ¡¡¡¡if£¨Rx_bit==Rx_data_length£©
+ 116          ¡¡¡¡{
+ 117          ¡¡¡¡Rx_bit=0;
+ 118          ¡¡¡¡}
+ 119          ¡¡¡¡RI=0;
+ 120          ¡¡¡¡}
+ 121          ¡¡¡¡ES=1;
+ 122          ¡¡¡¡}
+ 123          ¡¡¡¡uchar i=0;
+ 124          ¡¡¡¡for£¨i=0;i¡¶=Rx_data_length;i++£©
+ 125          ¡¡¡¡{
+ 126          ¡¡¡¡if£¨Rx_data£Ûi£Ý ==¡®+¡¯
+ 127          ¡¡¡¡&&Rx_data£Ûi+1£Ý==¡®C¡¯
+ 128          ¡¡¡¡&&Rx_data£Ûi+2£Ý==¡®M¡¯
+ 129          ¡¡¡¡&&Rx_data£Ûi+3£Ý==¡®T¡¯
+ 130          ¡¡¡¡&&Rx_data£Ûi+4£Ý==¡®I¡¯
+ 131          ¡¡¡¡&&Rx_data£Ûi+5£Ý==¡®£º¡¯£©
+ 132          ¡¡¡¡{
+ 133          ¡¡¡¡Response_receive_SMS_flag=1;
+ 134          ¡¡¡¡return;
+ 135          ¡¡¡¡}
+ 136          ¡¡¡¡}
+ 137          ¡¡¡¡Response_receive_SMS_flag=0;
+ 138          ¡¡¡¡}
+ 139          ¡¡¡¡/********************************************************************
+ 140          ¡¡¡¡* Ãû³Æ £º Uart_SendChar£¨uchar ch£©
+ 141          ¡¡¡¡* ¹¦ÄÜ £º Ïò´®¿Ú·¢ËÍÒ»¸ö×Ö·û
+ 142          ¡¡¡¡* ÊäÈë £º ÎÞ
+ 143          ¡¡¡¡* Êä³ö £º ÎÞ
+ 144          ¡¡¡¡***********************************************************************/
+ 145          ¡¡¡¡void Uart_SendChar£¨uchar ch£©
+ 146          ¡¡¡¡{
+ 147          ¡¡¡¡SBUF=ch;
+ 148          ¡¡¡¡while£¨TI==0£©;
+ 149          ¡¡¡¡TI=0;
+ 150          ¡¡¡¡}
+ 151          ¡¡¡¡void Response_receive_SMS£¨void£©
+ 152          ¡¡¡¡{
+ 153          ¡¡¡¡/********************************************************************
+ 154          ¡¡¡¡* Ãû³Æ £º Uart_SendChar£¨uchar ch£©
+ 155          ¡¡¡¡* ¹¦ÄÜ £º Ïò´®¿Ú·¢ËÍÒ»¸ö×Ö·û´®
+ 156          ¡¡¡¡* ÊäÈë £º ÎÞ
+ 157          ¡¡¡¡* Êä³ö £º ÎÞ
+ 158          ¡¡¡¡***********************************************************************/
+ 159          ¡¡¡¡void Uart_SendString£¨uchar *String£©
+ 160          ¡¡¡¡{
+ 161          ¡¡¡¡while £¨*String £¡=¡®\0¡¯£© //×Ö·û´®½áÊø±êÖ¾ \0
+ 162          ¡¡¡¡{
+ 163          ¡¡¡¡Uart_SendChar£¨*String£©; String++;
+ 164          ¡¡¡¡}
+ 165          ¡¡¡¡}
+ 166          ¡¡¡¡/********************************************************************
+ 167          ¡¡¡¡* Ãû³Æ £º uart_init£¨void£©
+ 168          ¡¡¡¡* ¹¦ÄÜ £º ´®¿Ú³õÊ¼»¯³ÌÐò
+ 169          ¡¡¡¡* ÊäÈë £º ÎÞ
+C51 COMPILER V9.54   TEST                                                                  05/12/2019 14:36:39 PAGE 4   
+
+ 170          ¡¡¡¡* Êä³ö £º ÎÞ
+ 171          ¡¡¡¡***********************************************************************/
+ 172          ¡¡¡¡void uart_init£¨void£© //³õÊ¼»¯uart
+ 173          ¡¡¡¡{
+ 174          ¡¡¡¡TMOD = 0x20; //¶¨Ê±Æ÷1¹¤×÷Ä£Ê½2£¬8Î»¿É×Ô¶¯ÖØÔØ³õÖµ£¬³£°Ñ¶¨Ê±1ÒÔÄ£Ê½2×÷Îª´®ÐÐ¿Ú²¨ÌØÂÊ·¢ÉúÆ÷
+ 175          ¡¡¡¡SCON = 0x50; //´®¿ÚÑ¡Ôñ¹¤×÷Ä£Ê½1Ê¹ÄÜ½ÓÊÕ£¬ÔÊÐí·¢ËÍ£¬ÔÊÐí½ÓÊÕ
+ 176          ¡¡¡¡TH1 = 0xFD; //ÓÃ11.0592 MHz²¨ÌØÂÊ 9600
+ 177          ¡¡¡¡TL1 = 0xFD;
+ 178          ¡¡¡¡TR1 = 1; //´ò¿ªÖÐÊ±Æ÷
+ 179          ¡¡¡¡ES=1; //´ò¿ª´®¿ÚÖÐ¶Ï
+ 180          ¡¡¡¡}
+ 181          ¡¡¡¡/********************************************************************
+ 182          ¡¡¡¡* Ãû³Æ £º Clear_Rxdata£¨uchar length£©
+ 183          ¡¡¡¡* ¹¦ÄÜ £º Çå¿Õ½ÓÊÕ»º´æÊý×é
+ 184          ¡¡¡¡* ÊäÈë £º ÎÞ
+ 185          ¡¡¡¡* Êä³ö £º ÎÞ
+ 186          ¡¡¡¡***********************************************************************/
+ 187          ¡¡¡¡void Clear_Rxdata£¨uchar length£© //Çå¿Õ½ÓÊÕ»º´æÊý×é
+ 188          ¡¡¡¡{
+ 189          ¡¡¡¡uchar Bit;
+ 190          ¡¡¡¡for£¨Bit=0;Bit¡¶length;Bit++£©
+ 191          ¡¡¡¡{
+ 192          ¡¡¡¡Rx_data£ÛBit£Ý=0x30; // asciiÂë±íÖÐÊ®½øÖÆ48¶ÔÓ¦µÄ×Ö·ûÎª0
+ 193          ¡¡¡¡delay£¨50£©;
+ 194          ¡¡¡¡}
+ 195          ¡¡¡¡Rx_bit=0;
+ 196          ¡¡¡¡}
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  6 ERROR(S)

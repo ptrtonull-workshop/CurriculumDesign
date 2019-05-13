@@ -1,0 +1,66 @@
+C51 COMPILER V9.54   CSB                                                                   05/12/2019 12:28:53 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE CSB
+OBJECT MODULE PLACED IN csb.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE csb.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include<reg52.h>               
+   2          #include<intrins.h>
+   3          
+   4          #define uchar unsigned char
+   5          #define uint unsigned int
+   6          ///////////////////////////////////////////////////////
+   7          unsigned char car_num=0;  //车位数值           
+   8          unsigned char Set_car_H=4;  //设置车数数值
+   9          signed char   s_car_num=0;  //剩余车位数值  
+  10          
+  11                         
+  12          uchar caiji=0;    //模式
+  13          void Shumaguan(uint num);
+  14          #include "shumaguan.h"
+  15          #include "NRF24l01.h"
+  16          
+  17          void delay_ms(uint z)
+  18          {
+  19   1        uint a,b;
+  20   1        for(a=z;z>0;z--)
+  21   1        for(b=110;b>0;b--); 
+  22   1      }   
+  23           void main()
+  24          {     
+  25   1            init_NRF24L01(); //初始化无线
+  26   1            TIM2Inital();
+  27   1            while(1)
+  28   1            {   
+  29   2             if(caiji==0){       //采集回来
+  30   3               nRF24L01_RxPacket(TxBuf);  //使用这个语句之后 主函数扫面的进程慢到大概1s一轮 //接收回来
+  31   3                if(TxBuf[0]==1){         
+  32   4                     car_num=TxBuf[1]*10+ TxBuf[2] ;    //当前车位
+  33   4                     s_car_num=TxBuf[3]*10+ TxBuf[4] ;  //剩余车位
+  34   4                   }  
+  35   3                  else{         
+  36   4                   TxBuf[0]=0;      //清零
+  37   4                   car_num=0;
+  38   4                   s_car_num=0;
+  39   4                   }
+  40   3                }
+  41   2                jisuan(Set_car_H,s_car_num);
+  42   2             }
+  43   1       }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    687    ----
+   CONSTANT SIZE    =     25    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     22      20
+   IDATA SIZE       =     36    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

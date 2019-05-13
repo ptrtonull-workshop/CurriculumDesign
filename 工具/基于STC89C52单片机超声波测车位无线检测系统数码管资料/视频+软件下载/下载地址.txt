@@ -1,0 +1,14 @@
+
+程序：Keil4 c51   链接：http://pan.baidu.com/s/1qWpFuYK 密码：56nz
+
+原理图：DXP 2004  链接：http://pan.baidu.com/s/1i3hfyVN 密码：2oig
+
+实物演示视频      链接：http://pan.baidu.com/s/1gfqpW7h 密码：gz6f
+ 
+
+
+
+软件安装视频：
+
+       程序  keil        链接：http://pan.baidu.com/s/1slzqJbJ 密码：8tfg
+       原理图：DXP 2004  链接：https://pan.baidu.com/s/19x4IQ8bUIoIyAkiDXnIUVQ 密码：h5cx

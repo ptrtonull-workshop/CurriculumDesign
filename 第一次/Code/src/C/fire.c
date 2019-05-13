@@ -9,7 +9,6 @@ unsigned char date;
 #define uchar unsigned char
 #define uint unsigned int
 sbit key1=P2^0;
-
 /*
 ********************************************************************************
 ** 函数名称 ： delay(uint z)
@@ -43,8 +42,15 @@ void Initial_com(void)
 //*************************
 //**********主函数*********
 //*************************
-unsigned char fire()
+unsigned int fire()
 {
+	unsigned int data1;
+	data1=0;
+	if(key1==0)
+	{
+		data1=1;
+	}
+	/*
 	 	 if(key1==0)
 		{
 			Fdelay(2);	  //消抖动
@@ -60,5 +66,6 @@ unsigned char fire()
 			SBUF=date;    //单片机发送
 			RI=0;
 		 }
-	  return date;
+	*/
+	  return data1;
 }

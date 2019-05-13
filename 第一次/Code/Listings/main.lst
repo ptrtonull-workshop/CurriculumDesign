@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  05/11/2019 18:37:08 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  05/12/2019 17:55:20 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -8,45 +8,57 @@ COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE src\C\main.c OPTIMIZE(8,SPEED) B
 
 line level    source
 
-   1          /*
-   2            
-   3          */
-   4          #include <REG51.H>
-   5          #include "beep.h"
-   6          #include "hc.h"
-   7          #include "led.h"
-   8          #include "fire.h"
-   9          
-  10          //extern void beep();
-  11          void init()
-  12          {
-  13   1        SerialInti();
-*** WARNING C206 IN LINE 13 OF src\C\main.c: 'SerialInti': missing function-prototype
-  14   1        Initial_com();
-  15   1      }
-  16          void main()
-  17          {
-  18   1        //uchar i= 0;
-  19   1        init();
-  20   1        while(1)
-  21   1        {
-  22   2          if(fire()==0X01)
-  23   2          {
-  24   3            Led();
-  25   3          }
-  26   2        }
-  27   1      }
+   1          #include <REG51.H>
+   2          #include "beep.h"
+   3          #include "hc.h"
+   4          #include "led.h"
+   5          #include "fire.h"
+   6          #include "sim900a.h"
+   7          
+   8          #define uchar unsigned char
+   9          uchar FireMs[] = "fire!";
+  10          uchar HCMs[]= "body";
+  11          uchar NoMs[]= "no";
+  12          
+  13          unsigned int a=0;
+  14          unsigned int b=0;
+  15          void init()
+  16          {
+  17   1        SerialInti();
+  18   1        Initial_com();
+  19   1      }
+  20          void main()
+  21          {
+  22   1        init();
+  23   1        while(1)
+  24   1        {
+  25   2          /*
+  26   2          b=fire();
+  27   2          while(b==1)
+  28   2          {
+  29   2            sendMs(FireMs);
+  30   2            b=0;
+  31   2          }
+  32   2          */
+  33   2          a=HC();
+  34   2          while(a==1)
+  35   2          {
+  36   3            sendMs(HCMs);
+  37   3            a=0;
+  38   3          }
+  39   2        }
+  40   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     20    ----
+   CODE SIZE        =     39    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----    ----
+   DATA SIZE        =     18    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

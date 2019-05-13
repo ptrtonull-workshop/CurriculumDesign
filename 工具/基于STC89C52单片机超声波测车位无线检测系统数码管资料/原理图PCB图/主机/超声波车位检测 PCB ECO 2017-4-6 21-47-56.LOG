@@ -1,0 +1,7 @@
+Added Component: Designator=U6(318E-04)
+Added Pin To Net: NetName=GND Pin=U6-1
+Added Pin To Net: NetName=3.3V Pin=U6-2
+Added Pin To Net: NetName=VCC Pin=U6-3
+Added Pin To Net: NetName=3.3V Pin=U6-4
+Added Member To Class: ClassName=³¬Éù²¨³µÎ»¼ì²â Member=Component U6 LM317MBSTT3
+Added Room: Name=³¬Éù²¨³µÎ»¼ì²â

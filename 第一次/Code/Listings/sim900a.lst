@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   SIM900A                                                               05/11/2019 18:37:09 PAGE 1   
+C51 COMPILER V9.54   SIM900A                                                               05/12/2019 17:55:21 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE SIM900A
@@ -62,46 +62,57 @@ line level    source
   52          
   53          /*串行通讯中断，收发完成将进入该中断*/
   54          void Serial_interrupt() interrupt 4 
-C51 COMPILER V9.54   SIM900A                                                               05/11/2019 18:37:09 PAGE 2   
+C51 COMPILER V9.54   SIM900A                                                               05/12/2019 17:55:21 PAGE 2   
 
   55          {
   56   1      //  a=SBUF;
   57   1        P2=SBUF;
   58   1        RI=0;//接收中断信号清零，表示将继续接收
   59   1      //  flag=1;//进入中断的标志符号
-  60   1      }
-  61          
-  62          void Uart1Send(uchar c)
-  63          {
-  64   1        SBUF=c;
-  65   1        while(!TI);//等待发送完成信号（TI=1）出现
-  66   1        TI=0; 
-  67   1      }
-  68          
-  69          //串行口连续发送char型数组，遇到终止号/0将停止
-  70          void Uart1Sends(uchar *str)
-  71          {
-  72   1        while(*str!='\0')
-  73   1        {
-  74   2          SBUF=*str;
-  75   2          while(!TI);//等待发送完成信号（TI=1）出现
-  76   2          TI=0;
-  77   2          str++;
-  78   2        }
-  79   1      }
+  60   1        
+  61   1      }
+  62          
+  63          void Uart1Send(uchar c)
+  64          {
+  65   1        SBUF=c;
+  66   1        while(!TI);//等待发送完成信号（TI=1）出现
+  67   1        TI=0; 
+  68   1      }
+  69          void Uart1Sends(uchar *str)
+  70          {
+  71   1        while(*str!='\0')
+  72   1        {
+  73   2          SBUF=*str;
+  74   2          while(!TI);//????????(TI=1)??
+  75   2          TI=0;
+  76   2          str++;
+  77   2        }
+  78   1      }
+  79          //串行口连续发送char型数组，遇到终止号/0将停止
   80          
-  81          void sendMs(uchar sms)
+  81          void sendMs(uchar *str)
   82          {
   83   1        Uart1Sends("AT+CSCS=\"GSM\"\r\n");
   84   1        DelaySec(3);//延时3秒
   85   1        Uart1Sends("AT+CMGF=1\r\n");
   86   1        DelaySec(3);//延时3秒
-  87   1        Uart1Sends("AT+CMGS=\"13104610925\"\r\n");//此处修改为对方的电话号
+  87   1        Uart1Sends("AT+CMGS=\"13676604334\"\r\n");//此处修改为对方的电话号
   88   1        DelaySec(5);//延时3秒
-  89   1        Uart1Sends(sms);//修改短信内容
-*** ERROR C214 IN LINE 89 OF src\C\sim900a.c: illegal pointer conversion
+  89   1        Uart1Sends(str);//修改短信内容
   90   1        Uart1Send(0x1a);
-  91   1        DelaySec(15);//延时20秒
+  91   1        DelaySec(10);//延时20秒
   92   1      }
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    182    ----
+   CONSTANT SIZE    =     52    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

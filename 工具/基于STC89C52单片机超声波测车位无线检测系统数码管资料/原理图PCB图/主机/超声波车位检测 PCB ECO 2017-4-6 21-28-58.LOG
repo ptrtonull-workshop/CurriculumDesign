@@ -1,0 +1,146 @@
+Removed Pin From Net: NetName=GND Pin=B1-1
+Removed Pin From Net: NetName=NetB1_2 Pin=B1-2
+Removed Pin From Net: NetName=GND Pin=P3-1
+Removed Pin From Net: NetName=VCC Pin=P3-2
+Removed Pin From Net: NetName=NetP3_3 Pin=P3-3
+Removed Pin From Net: NetName=P16 Pin=P3-4
+Removed Pin From Net: NetName=GND Pin=P3-5
+Removed Pin From Net: NetName=P17 Pin=P3-6
+Removed Pin From Net: NetName=P00 Pin=P3-7
+Removed Pin From Net: NetName=P01 Pin=P3-8
+Removed Pin From Net: NetName=P02 Pin=P3-9
+Removed Pin From Net: NetName=P03 Pin=P3-10
+Removed Pin From Net: NetName=P04 Pin=P3-11
+Removed Pin From Net: NetName=P05 Pin=P3-12
+Removed Pin From Net: NetName=P06 Pin=P3-13
+Removed Pin From Net: NetName=P07 Pin=P3-14
+Removed Pin From Net: NetName=VCC Pin=P3-15
+Removed Pin From Net: NetName=GND Pin=P3-16
+Removed Pin From Net: NetName=VCC Pin=Qf1-1
+Removed Pin From Net: NetName=NetQf1_2 Pin=Qf1-2
+Removed Pin From Net: NetName=NetB1_2 Pin=Qf1-3
+Removed Pin From Net: NetName=P22 Pin=R01-2
+Removed Pin From Net: NetName=P20 Pin=R02-1
+Removed Pin From Net: NetName=NetQf1_2 Pin=R02-2
+Removed Pin From Net: NetName=P23 Pin=R03-2
+Removed Pin From Net: NetName=P24 Pin=R04-2
+Removed Pin From Net: NetName=GND Pin=Rp1-1
+Removed Pin From Net: NetName=NetP3_3 Pin=Rp1-2
+Removed Pin From Net: NetName=NetP3_3 Pin=Rp1-3
+Removed Pin From Net: NetName=GND Pin=S1-1
+Removed Pin From Net: NetName=P10 Pin=S1-2
+Removed Pin From Net: NetName=GND Pin=S2-1
+Removed Pin From Net: NetName=P11 Pin=S2-2
+Removed Pin From Net: NetName=GND Pin=S3-1
+Removed Pin From Net: NetName=P12 Pin=S3-2
+Removed Member From Class: ClassName=51单片机四方向超声波测距系统 Member=B1
+Removed Member From Class: ClassName=51单片机四方向超声波测距系统 Member=P3
+Removed Member From Class: ClassName=51单片机四方向超声波测距系统 Member=Qf1
+Removed Member From Class: ClassName=51单片机四方向超声波测距系统 Member=R02
+Removed Member From Class: ClassName=51单片机四方向超声波测距系统 Member=Rp1
+Removed Member From Class: ClassName=51单片机四方向超声波测距系统 Member=S1
+Removed Member From Class: ClassName=51单片机四方向超声波测距系统 Member=S2
+Removed Member From Class: ClassName=51单片机四方向超声波测距系统 Member=S3
+Added Component: Designator=DS02(4位带4点大数码管)
+Added Component: Designator=Q01(BCY-W3/E4)
+Added Component: Designator=Q02(BCY-W3/E4)
+Added Component: Designator=Q03(BCY-W3/E4)
+Added Component: Designator=Q04(BCY-W3/E4)
+Added Component: Designator=R011(AXIAL-0.4)
+Added Component: Designator=R012(AXIAL-0.4)
+Added Component: Designator=R12(AXIAL-0.4)
+Added Component: Designator=R013(AXIAL-0.4)
+Added Component: Designator=R13(AXIAL-0.4)
+Added Component: Designator=R014(AXIAL-0.4)
+Added Component: Designator=R14(AXIAL-0.4)
+Added Component: Designator=R15(AXIAL-0.4)
+Added Component: Designator=R16(AXIAL-0.4)
+Added Component: Designator=R17(AXIAL-0.4)
+Added Component: Designator=R18(AXIAL-0.4)
+Added Component: Designator=R19(AXIAL-0.4)
+Added Pin To Net: NetName=VCC Pin=Q01-1
+Added Pin To Net: NetName=NetB1_2 Pin=Q01-2
+Added Pin To Net: NetName=VCC Pin=Q02-1
+Added Pin To Net: NetName=NetP3_3 Pin=Q02-2
+Added Pin To Net: NetName=VCC Pin=Q03-1
+Added Pin To Net: NetName=NetQf1_2 Pin=Q03-2
+Added Pin To Net: NetName=VCC Pin=Q04-1
+Added Pin To Net: NetName=P20 Pin=R01-2
+Added Pin To Net: NetName=P17 Pin=R03-2
+Added Pin To Net: NetName=P16 Pin=R04-2
+Added Pin To Net: NetName=P27 Pin=R011-1
+Added Pin To Net: NetName=NetB1_2 Pin=R011-2
+Added Pin To Net: NetName=P00 Pin=R12-1
+Added Pin To Net: NetName=P26 Pin=R012-1
+Added Pin To Net: NetName=NetP3_3 Pin=R012-2
+Added Pin To Net: NetName=P01 Pin=R13-1
+Added Pin To Net: NetName=P25 Pin=R013-1
+Added Pin To Net: NetName=NetQf1_2 Pin=R013-2
+Added Pin To Net: NetName=P02 Pin=R14-1
+Added Pin To Net: NetName=P24 Pin=R014-1
+Added Pin To Net: NetName=P03 Pin=R15-1
+Added Pin To Net: NetName=P04 Pin=R16-1
+Added Pin To Net: NetName=P05 Pin=R17-1
+Added Pin To Net: NetName=P06 Pin=R18-1
+Added Pin To Net: NetName=P07 Pin=R19-1
+Change Net Name : Old Net Name=NetB1_2 New Net Name=NetQ01_2
+Change Net Name : Old Net Name=NetP3_3 New Net Name=NetQ02_2
+Change Net Name : Old Net Name=NetQf1_2 New Net Name=NetQ03_2
+Added Pin To Net: NetName=A Pin=DS02-11
+Added Pin To Net: NetName=A Pin=R12-2
+Added Net: Name=A
+Added Pin To Net: NetName=B Pin=DS02-7
+Added Pin To Net: NetName=B Pin=R13-2
+Added Net: Name=B
+Added Pin To Net: NetName=C Pin=DS02-4
+Added Pin To Net: NetName=C Pin=R14-2
+Added Net: Name=C
+Added Pin To Net: NetName=DP Pin=DS02-3
+Added Pin To Net: NetName=DP Pin=R19-2
+Added Net: Name=DP
+Added Pin To Net: NetName=D Pin=DS02-2
+Added Pin To Net: NetName=D Pin=R15-2
+Added Net: Name=D
+Added Pin To Net: NetName=E Pin=DS02-1
+Added Pin To Net: NetName=E Pin=R16-2
+Added Net: Name=E
+Added Pin To Net: NetName=F Pin=DS02-10
+Added Pin To Net: NetName=F Pin=R17-2
+Added Net: Name=F
+Added Pin To Net: NetName=G Pin=DS02-5
+Added Pin To Net: NetName=G Pin=R18-2
+Added Net: Name=G
+Added Pin To Net: NetName=K1 Pin=DS02-6
+Added Pin To Net: NetName=K1 Pin=Q01-3
+Added Net: Name=K1
+Added Pin To Net: NetName=K2 Pin=DS02-8
+Added Pin To Net: NetName=K2 Pin=Q02-3
+Added Net: Name=K2
+Added Pin To Net: NetName=K3 Pin=DS02-9
+Added Pin To Net: NetName=K3 Pin=Q03-3
+Added Net: Name=K3
+Added Pin To Net: NetName=K4 Pin=DS02-12
+Added Pin To Net: NetName=K4 Pin=Q04-3
+Added Net: Name=K4
+Added Pin To Net: NetName=NetQ04_2 Pin=Q04-2
+Added Pin To Net: NetName=NetQ04_2 Pin=R014-2
+Added Net: Name=NetQ04_2
+Change Class Name : Old Net Name=51单片机四方向超声波测距系统 New Net Name=超声波车位检测
+Added Member To Class: ClassName=超声波车位检测 Member=Component DS02 共阳
+Added Member To Class: ClassName=超声波车位检测 Member=Component Q01 8550
+Added Member To Class: ClassName=超声波车位检测 Member=Component Q02 8550
+Added Member To Class: ClassName=超声波车位检测 Member=Component Q03 8550
+Added Member To Class: ClassName=超声波车位检测 Member=Component Q04 8550
+Added Member To Class: ClassName=超声波车位检测 Member=Component R011 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R012 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R12 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R013 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R13 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R014 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R14 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R15 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R16 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R17 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R18 Res2
+Added Member To Class: ClassName=超声波车位检测 Member=Component R19 Res2
+Added Room: Name=超声波车位检测

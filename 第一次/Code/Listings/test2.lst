@@ -1,0 +1,22 @@
+C51 COMPILER V9.54   TEST2                                                                 05/12/2019 14:36:39 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TEST2
+OBJECT MODULE PLACED IN .\Objects\test2.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE src\C\test2.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src\H;.\src\H) DEBUG OBJ
+                    -ECTEXTEND PRINT(.\Listings\test2.lst) TABS(2) OBJECT(.\Objects\test2.obj)
+
+line level    source
+
+   1          #ifndef __LCD1602_DRV_H__
+   2          #define __LCD1602_DRV_H__
+   3          #define uchar unsigned char
+   4          #define uint unsigned int #define one 0x80 //第一行的初始位置
+*** ERROR C302 IN LINE 4 OF src\C\test2.c: misused # operator
+   5          #define two 0x80+0x40
+   6          void write_1602com(uchar com);
+   7          void write_1602dat(uchar dat);
+   8          void lcd_init();
+   9          #endif
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)

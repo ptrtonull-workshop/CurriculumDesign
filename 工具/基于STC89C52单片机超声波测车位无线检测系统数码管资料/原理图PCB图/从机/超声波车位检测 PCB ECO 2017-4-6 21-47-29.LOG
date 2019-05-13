@@ -1,0 +1,20 @@
+Removed Pin From Net: NetName=GND Pin=3-1
+Removed Pin From Net: NetName=3.3V Pin=3-2
+Removed Pin From Net: NetName=CE Pin=3-3
+Removed Pin From Net: NetName=IRQ Pin=3-4
+Removed Pin From Net: NetName=P14 Pin=3-5
+Removed Pin From Net: NetName=MOSI Pin=3-6
+Removed Pin From Net: NetName=MISO Pin=3-7
+Removed Pin From Net: NetName=CSN Pin=3-8
+Removed Member From Class: ClassName=³¬Éù²¨³µÎ»¼ì²â Member=3
+Added Component: Designator=24l01(HDR2X4)
+Added Pin To Net: NetName=GND Pin=24l01-1
+Added Pin To Net: NetName=3.3V Pin=24l01-2
+Added Pin To Net: NetName=CE Pin=24l01-3
+Added Pin To Net: NetName=CSN Pin=24l01-4
+Added Pin To Net: NetName=P14 Pin=24l01-5
+Added Pin To Net: NetName=MOSI Pin=24l01-6
+Added Pin To Net: NetName=MISO Pin=24l01-7
+Added Pin To Net: NetName=IRQ Pin=24l01-8
+Added Member To Class: ClassName=³¬Éù²¨³µÎ»¼ì²â Member=Component 24l01 Header 4X2
+Added Room: Name=³¬Éù²¨³µÎ»¼ì²â

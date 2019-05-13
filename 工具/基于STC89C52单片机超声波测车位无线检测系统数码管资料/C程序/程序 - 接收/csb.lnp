@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"csb.obj" 
+TO "csb" 
+RAMSIZE(256) 

@@ -3,5 +3,6 @@
 
 #endif
 #define uchar unsigned char
-void sendMs(uchar sms);
+void sendMs(uchar *str);
 void SerialInti(void);
+void DelaySec(int sec);

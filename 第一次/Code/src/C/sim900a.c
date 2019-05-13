@@ -57,6 +57,7 @@ void Serial_interrupt() interrupt 4
 	P2=SBUF;
 	RI=0;//接收中断信号清零，表示将继续接收
 //	flag=1;//进入中断的标志符号
+	
 }
 
 void Uart1Send(uchar c)
@@ -65,28 +66,27 @@ void Uart1Send(uchar c)
 	while(!TI);//等待发送完成信号（TI=1）出现
 	TI=0;	
 }
-
-//串行口连续发送char型数组，遇到终止号/0将停止
 void Uart1Sends(uchar *str)
 {
 	while(*str!='\0')
 	{
 		SBUF=*str;
-		while(!TI);//等待发送完成信号（TI=1）出现
+		while(!TI);//????????(TI=1)??
 		TI=0;
 		str++;
 	}
 }
+//串行口连续发送char型数组，遇到终止号/0将停止
 
-void sendMs(uchar sms)
+void sendMs(uchar *str)
 {
 	Uart1Sends("AT+CSCS=\"GSM\"\r\n");
 	DelaySec(3);//延时3秒
 	Uart1Sends("AT+CMGF=1\r\n");
 	DelaySec(3);//延时3秒
-	Uart1Sends("AT+CMGS=\"13104610925\"\r\n");//此处修改为对方的电话号
+	Uart1Sends("AT+CMGS=\"13676604334\"\r\n");//此处修改为对方的电话号
 	DelaySec(5);//延时3秒
-	Uart1Sends(sms);//修改短信内容
+	Uart1Sends(str);//修改短信内容
 	Uart1Send(0x1a);
-	DelaySec(15);//延时20秒
+	DelaySec(10);//延时20秒
 }
